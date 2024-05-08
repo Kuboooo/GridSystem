@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -13,11 +11,15 @@ public class MouseCoordinates : MonoBehaviour {
 
     void Update() {
         HighlightTileOnMouseHover();
-        if (Input.GetMouseButtonDown(0) && previous != null) {
-            Instantiate(building, previous.transform.position, Quaternion.identity);
-        }        
-        if (Input.GetMouseButtonDown(1) && previous != null) {
-            Destroy(previous.transform.GameObject());
+        if (Input.GetMouseButtonDown(0) && previous != null && previous.name == "HexTop_ClayGround(Clone)" && previous.transform.Find("Building1(Clone)") == null) {
+            GameObject buildingInstance = Instantiate(building, previous.transform.position, Quaternion.identity);
+            buildingInstance.transform.parent = previous.transform;
+        }
+
+        if (Input.GetMouseButtonDown(1) && previous != null && previous.name == "HexTop_ClayGround(Clone)" && previous.transform.Find("Building1(Clone)") != null) {
+            previous.transform.parent = null;
+            
+            Destroy(previous.transform.GameObject().transform.Find("Building1(Clone)").transform.GameObject());
         }
     }
 
@@ -27,7 +29,9 @@ public class MouseCoordinates : MonoBehaviour {
         Ray ray = mainCamera.ScreenPointToRay(mousePos);
 
         if (previous != null) {
-            previous.GameObject().SetActive(false);
+            if (previous.transform.gameObject.transform.Find("Selected") != null) {
+                previous.transform.gameObject.transform.Find("Selected").GameObject().SetActive(false);
+            }
             previous = null;
         }
 
@@ -36,8 +40,9 @@ public class MouseCoordinates : MonoBehaviour {
             if (find != null) {
                 find.GameObject().SetActive(true);
             }
+
             sphere.transform.position = hit.point;
-            previous = find.GameObject();
+            previous = hit.transform.gameObject;
         }
     }
 
