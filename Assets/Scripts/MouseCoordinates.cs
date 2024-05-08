@@ -7,7 +7,8 @@ public class MouseCoordinates : MonoBehaviour {
     [SerializeField] private GameObject sphere;
     [SerializeField] private GameObject building;
     [SerializeField] private GameObject building2;
-
+    
+    private GameObject buildingPreview;
     private GameObject previous = null;
 
     void Update() {
