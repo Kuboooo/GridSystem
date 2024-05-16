@@ -16,7 +16,7 @@ public class MapGenerator : MonoBehaviour
 
     public void Start() {
         MakeMapGrid();
-    }
+    }    
 
     private Vector2 GetHexCoords(int x, int z) {
         float xPos = x * tileSize * Mathf.Cos(Mathf.Deg2Rad * 30);
@@ -38,10 +38,4 @@ public class MapGenerator : MonoBehaviour
             }
         }
     }
-    
-    public List<GameObject> GetTiles() {
-        return tiles;
-    }
-    
-    
 }

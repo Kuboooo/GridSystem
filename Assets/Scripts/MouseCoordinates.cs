@@ -19,10 +19,10 @@ public class MouseCoordinates : MonoBehaviour {
 
     private void BuildBuilding() {
 
-        if (Input.GetMouseButtonDown(0) && previous != null && previous.name == "HexTop_ClayGround(Clone)" && previous.transform.Find("Building1(Clone)") == null) {
-            GameObject buildingInstance = Instantiate(building, previous.transform.position, Quaternion.identity);
-            buildingInstance.transform.parent = previous.transform;
-        }
+        // if (Input.GetMouseButtonDown(0) && previous != null && previous.name == "HexTop_ClayGround(Clone)" && previous.transform.Find("Building1(Clone)") == null) {
+        //     GameObject buildingInstance = Instantiate(building, previous.transform.position, Quaternion.identity);
+        //     buildingInstance.transform.parent = previous.transform;
+        // }
         if (Input.GetKeyDown("space") && previous != null && previous.name == "HexTop_ClayGround(Clone)" && previous.transform.Find("Building1(Clone)") == null) {
             GameObject buildingInstance = Instantiate(building2, previous.transform.position, Quaternion.identity);
             buildingInstance.transform.parent = previous.transform;

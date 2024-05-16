@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,8 +12,9 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Button building2;
     [SerializeField] private Button cancelPreview;
     [SerializeField] private GameObject previewContainer;
-    [SerializeField] private GameObject prefabToPreview1;
-    [SerializeField] private GameObject prefabToPreview2;
+    // TODO KUBO pull these somehow automatically out of some SOlist
+    [SerializeField] private PreviewBuildingSO previewBuildingSO;
+    [SerializeField] private PreviewBuildingSO previewBuildingSphereSO;
 
     private GameObject previewInstance;
     private bool previewing = false;
@@ -20,11 +22,11 @@ public class UIManager : MonoBehaviour {
     private void Awake() {
         building1.onClick.AddListener(() => {
             if (previewInstance != null) Destroy(previewInstance);
-            ShowPreview(prefabToPreview1);
+            ShowPreview(previewBuildingSO.prefabToPreview.GameObject());
         });        
         building2.onClick.AddListener(() => {
             if (previewInstance != null) Destroy(previewInstance);
-            ShowPreview(prefabToPreview2);
+            ShowPreview(previewBuildingSphereSO.prefabToPreview.GameObject());
         });
         cancelPreview.onClick.AddListener(() => {
             previewing = false;
@@ -40,11 +42,21 @@ public class UIManager : MonoBehaviour {
             Ray ray = mainCamera.ScreenPointToRay(mousePos);
         
             if (Physics.Raycast(ray, out RaycastHit hit)) {
-                if (hit.transform != null && hit.transform.name != "Cube" && hit.transform.name != "Sphere" ) {
+                if (hit.transform != null && hit.transform.name != "Cube" && hit.transform.name != "Sphere") {
                     Debug.Log(hit.transform.name);
                     previewInstance.transform.position = hit.transform.position;
+                    
+                    // todo kubo this needs rework - the find should be searching only for 1  for all buildings so buildings need to somehow flag the tile that it's there
+                    if (Input.GetMouseButtonDown(0) && previewInstance != null  && hit.transform.Find("Building1Preview(Clone)(Clone)") == null && hit.transform.Find("Building2Preview(Clone)(Clone)") == null)   {
+                        GameObject newBuilding = previewInstance;
+                        GameObject buildingInstance = Instantiate(newBuilding, hit.transform.position, Quaternion.identity);
+                        buildingInstance.transform.parent = hit.transform;
+                        
+                        previewing = false;
+                    }
                 }
             }
+
         }
     }
 

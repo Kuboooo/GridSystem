@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b064bfede1fdb3a4799d26e268a9250f, type: 3}
+  m_Name: PreviewBuildingSphereSO
+  m_EditorClassIdentifier: 
+  prefabToPreview: {fileID: 4255531093133612765, guid: c57bf9823223b01459480ff7c08740f1,
+    type: 3}
+  prefabToBuild: {fileID: 6393568644717428071, guid: a0d2ab2f073c3644399f499c97efafe4,
+    type: 3}

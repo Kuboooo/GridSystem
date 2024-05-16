@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4963184640821395020}
   - component: {fileID: 3659557029773033772}
   - component: {fileID: 8679792747479496664}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Building2Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,6 +141,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Sphere
+      objectReference: {fileID: 0}
+    - target: {fileID: 6393568644717428071, guid: a0d2ab2f073c3644399f499c97efafe4,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7752373699104243681, guid: a0d2ab2f073c3644399f499c97efafe4,
         type: 3}
