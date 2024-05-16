@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b064bfede1fdb3a4799d26e268a9250f, type: 3}
   m_Name: PreviewBuildingCubeSO
   m_EditorClassIdentifier: 
-  prefabToPreview: {fileID: 7045155131811707853, guid: ce35a535ee60af348a3fdcf2a982483d,
+  prefabToPreview: {fileID: 4548084568807743218, guid: c5065bdda6fd5a44891262215158a762,
     type: 3}
-  prefabToBuild: {fileID: 7796882945245637704, guid: 66aad0332450fba4ca832f431cd6cafb,
+  prefabToBuild: {fileID: 7370406621452308256, guid: 90115897d2710cb4291f6ad7eed4b119,
     type: 3}
