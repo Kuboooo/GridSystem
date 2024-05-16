@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Button building1;
     [SerializeField] private Button building2;
     [SerializeField] private Button cancelPreview;
+    [SerializeField] private TextMeshProUGUI buildingsCount;
     [SerializeField] private GameObject previewContainer;
     // TODO KUBO pull these somehow automatically out of some SOlist
     [SerializeField] private PreviewBuildingSO previewBuildingSO;
@@ -31,6 +33,7 @@ public class UIManager : MonoBehaviour {
         cancelPreview.onClick.AddListener(() => {
             previewing = false;
         });
+        buildingsCount.text = "0";
     }
 
     private void Update() {
@@ -38,6 +41,9 @@ public class UIManager : MonoBehaviour {
             if (previewInstance != null) Destroy(previewInstance);
         }
         else {
+            if (Input.GetKeyDown(KeyCode.Q) && previewInstance != null) {
+                previewInstance.transform.rotation *= Quaternion.Euler(0, 60, 0);                
+            }
             Vector3 mousePos = Input.mousePosition;
             Ray ray = mainCamera.ScreenPointToRay(mousePos);
         
@@ -49,9 +55,10 @@ public class UIManager : MonoBehaviour {
                     // todo kubo this needs rework - the find should be searching only for 1  for all buildings so buildings need to somehow flag the tile that it's there
                     if (Input.GetMouseButtonDown(0) && previewInstance != null  && hit.transform.Find("Building1Preview(Clone)(Clone)") == null && hit.transform.Find("Building2Preview(Clone)(Clone)") == null)   {
                         GameObject newBuilding = previewInstance;
-                        GameObject buildingInstance = Instantiate(newBuilding, hit.transform.position, Quaternion.identity);
+                        GameObject buildingInstance = Instantiate(newBuilding, hit.transform.position, previewInstance.transform.rotation);
                         buildingInstance.transform.parent = hit.transform;
                         
+                        buildingsCount.text = Int32.Parse(buildingsCount.text) + 1 + "";
                         previewing = false;
                     }
                 }
@@ -59,7 +66,6 @@ public class UIManager : MonoBehaviour {
 
         }
     }
-
     
     
     private void ShowPreview(GameObject prefab) {
