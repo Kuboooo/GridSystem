@@ -5,14 +5,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class MouseCoordinates : MonoBehaviour {
-    
     public static event Action<object, EventArgs> OnBuildingBuilt;
 
-    public static void PreviewBuilding()
-    {
+    public static void PreviewBuilding() {
         OnBuildingBuilt?.Invoke(null, EventArgs.Empty);
     }
-    
+
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject map;
     private HexGridGenerator hexGridGenerator;
@@ -20,6 +18,7 @@ public class MouseCoordinates : MonoBehaviour {
     private Dictionary<RedBlockGridConverted.Hex, GameObject> hexMap;
     private RedBlockGridConverted.Layout layout;
 
+    private HashSet<GameObject> previewInstances = new HashSet<GameObject>();
     private GameObject previewInstance;
     private bool previewing;
     [SerializeField] private GameObject previewContainer;
@@ -36,16 +35,17 @@ public class MouseCoordinates : MonoBehaviour {
 
     private void OnStopPreviewing(object arg1, EventArgs arg2) {
         previewing = false;
-        if (previewInstance != null) Destroy(previewInstance);
+        DestroyPreviewInstance();
     }
 
     private void OnPreviewingBuilding(GameObject prefab) {
         previewing = true;
-
+        DestroyPreviewInstance();
         previewInstance = Instantiate(prefab, previewContainer.transform);
         previewInstance.transform.localPosition = Vector3.zero;
         previewInstance.transform.localRotation = Quaternion.identity;
         previewInstance.transform.localScale = Vector3.one;
+        previewInstances.Add(previewInstance);
     }
 
     private void Start() {
@@ -59,6 +59,7 @@ public class MouseCoordinates : MonoBehaviour {
         ShowPreview();
         if (Input.GetKeyDown(KeyCode.Escape)) {
             previewing = false;
+            DestroyPreviewInstance();
         }
     }
 
@@ -88,10 +89,10 @@ public class MouseCoordinates : MonoBehaviour {
 
     private void ShowPreview() {
         if (!previewing) {
-            if (previewInstance != null) Destroy(previewInstance);
+            DestroyPreviewInstance();
         }
         else {
-            if (Input.GetKeyDown(KeyCode.Q) && previewInstance != null) {
+            if (Input.GetKeyDown(KeyCode.Q)) {
                 previewInstance.transform.rotation *= Quaternion.Euler(0, 60, 0);
             }
 
@@ -112,7 +113,7 @@ public class MouseCoordinates : MonoBehaviour {
 
                     Destroy(hexObject);
                     previewing = false;
-
+                    DestroyPreviewInstance();
                     OnBuildingBuilt?.Invoke(null, EventArgs.Empty);
                 }
             }
@@ -129,5 +130,13 @@ public class MouseCoordinates : MonoBehaviour {
         hex = RedBlockGridConverted.HexRound(fractionalHex);
         GameObject hexObject = hexMap[hex];
         return hexObject;
+    }
+
+    private void DestroyPreviewInstance() {
+        foreach (GameObject preview in previewInstances) {
+            Destroy(preview);
+        }
+        previewInstances.Clear();
+        previewInstance = null;
     }
 }

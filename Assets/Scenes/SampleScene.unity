@@ -1705,7 +1705,7 @@ Transform:
   m_GameObject: {fileID: 1304851156}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.1035929, y: 0.3156805, z: 0.9026389}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1723,7 +1723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 990d4dbd5afe66e4ea24e42522eb5a4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexPrefab: {fileID: 7123701427149761702, guid: e85a23b2655403c4e86586c579743590,
+  hexPrefab: {fileID: 1123567565558726044, guid: f0b9ae5d590e11b4e80575a81bbd9869,
     type: 3}
   gridWidth: 3
   gridHeight: 3
