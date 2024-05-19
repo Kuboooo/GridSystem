@@ -1,9 +1,18 @@
 using System;
 using System.Collections.Generic;
+using UI;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class MouseCoordinates : MonoBehaviour {
+    
+    public static event Action<object, EventArgs> OnBuildingBuilt;
+
+    public static void PreviewBuilding()
+    {
+        OnBuildingBuilt?.Invoke(null, EventArgs.Empty);
+    }
+    
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject map;
     private HexGridGenerator hexGridGenerator;
@@ -103,6 +112,8 @@ public class MouseCoordinates : MonoBehaviour {
 
                     Destroy(hexObject);
                     previewing = false;
+
+                    OnBuildingBuilt?.Invoke(null, EventArgs.Empty);
                 }
             }
         }
