@@ -1,43 +1,122 @@
+using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class MouseCoordinates : MonoBehaviour {
-
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private GameObject sphere;
-    private GameObject previous = null;
+    [SerializeField] private GameObject map;
+    private HexGridGenerator hexGridGenerator;
+    private GameObject previous;
+    private Dictionary<RedBlockGridConverted.Hex, GameObject> hexMap;
+    private RedBlockGridConverted.Layout layout;
 
-    void Update() {
-        // HighlightTileOnMouseHover();
+    private GameObject previewInstance;
+    private bool previewing;
+    [SerializeField] private GameObject previewContainer;
+
+    private void OnEnable() {
+        UIManager.OnPreviewingBuilding += OnPreviewingBuilding;
+        UIManager.OnStopPreviewing += OnStopPreviewing;
     }
 
-    private void HighlightTileOnMouseHover() {
+    private void OnDisable() {
+        UIManager.OnPreviewingBuilding -= OnPreviewingBuilding;
+        UIManager.OnStopPreviewing -= OnStopPreviewing;
+    }
 
-        Vector3 mousePos = Input.mousePosition;
-        Ray ray = mainCamera.ScreenPointToRay(mousePos);
+    private void OnStopPreviewing(object arg1, EventArgs arg2) {
+        previewing = false;
+        if (previewInstance != null) Destroy(previewInstance);
+    }
 
+    private void OnPreviewingBuilding(GameObject prefab) {
+        previewing = true;
+
+        previewInstance = Instantiate(prefab, previewContainer.transform);
+        previewInstance.transform.localPosition = Vector3.zero;
+        previewInstance.transform.localRotation = Quaternion.identity;
+        previewInstance.transform.localScale = Vector3.one;
+    }
+
+    private void Start() {
+        hexGridGenerator = HexGridGenerator.GetInstance();
+        hexMap = hexGridGenerator.GetHexMap();
+        layout = hexGridGenerator.GetLayout();
+    }
+
+    void Update() {
+        HighlightTileOnMouseHover();
+        ShowPreview();
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            previewing = false;
+        }
+    }
+
+    void HighlightTileOnMouseHover() {
         if (previous != null) {
-            if (previous.transform.gameObject.transform.Find("Selected") != null) {
-                previous.transform.gameObject.transform.Find("Selected").GameObject().SetActive(false);
+            if (previous.transform.Find("Selected") != null) {
+                previous.transform.Find("Selected").GameObject().SetActive(false);
             }
+
             previous = null;
         }
 
+        Vector3 mousePos = Input.mousePosition;
+        Ray ray = mainCamera.ScreenPointToRay(mousePos);
         if (Physics.Raycast(ray, out RaycastHit hit)) {
-            Debug.Log("Hit: " + hit.transform.position.x + " " + hit.transform.position.y + " " + hit.transform.position.z);
-            // Debug.Log("Hit parent name: " + hit.transform.parent.transform.name);
-            Transform find = hit.transform.parent.transform.Find("Selected");
-            if (find != null) {
+            GameObject hexObject = GetHexFromRay(hit, out RedBlockGridConverted.Hex hex);
+            if (hexObject != null && hexObject.transform.Find("Selected") != null) {
+                Transform find = hexObject.transform.Find("Selected");
                 find.GameObject().SetActive(true);
+                previous = hexObject;
             }
-
-            sphere.transform.position = hit.point;
-            previous = hit.transform.parent.transform.gameObject;
-        }
-        else {
-            // Debug.Log("missed");
-
+            else {
+                previous = null;
+            }
         }
     }
 
+    private void ShowPreview() {
+        if (!previewing) {
+            if (previewInstance != null) Destroy(previewInstance);
+        }
+        else {
+            if (Input.GetKeyDown(KeyCode.Q) && previewInstance != null) {
+                previewInstance.transform.rotation *= Quaternion.Euler(0, 60, 0);
+            }
+
+            Vector3 mousePos = Input.mousePosition;
+            Ray ray = mainCamera.ScreenPointToRay(mousePos);
+
+            if (Physics.Raycast(ray, out RaycastHit hit)) {
+                GameObject hexObject = GetHexFromRay(hit, out RedBlockGridConverted.Hex hex);
+                previewInstance.transform.position = hexObject.transform.position;
+
+                // todo kubo this needs rework - the find should be searching only for 1  for all buildings so buildings need to somehow flag the tile that it's there
+                if (Input.GetMouseButtonDown(0) && previewInstance != null && CanBuild(hex)) {
+                    GameObject buildingInstance = Instantiate(previewInstance, previewInstance.transform.position,
+                        previewInstance.transform.rotation);
+                    buildingInstance.transform.parent = map.transform;
+                    hexMap.Remove(hex);
+                    hexMap.Add(hex, buildingInstance);
+
+                    Destroy(hexObject);
+                    previewing = false;
+                }
+            }
+        }
+    }
+
+    private bool CanBuild(RedBlockGridConverted.Hex hex) {
+        return true;
+    }
+
+    private GameObject GetHexFromRay(RaycastHit hit, out RedBlockGridConverted.Hex hex) {
+        RedBlockGridConverted.FractionalHex fractionalHex =
+            RedBlockGridConverted.PixelToHex(layout, new RedBlockGridConverted.Point(hit.point.x, hit.point.z));
+        hex = RedBlockGridConverted.HexRound(fractionalHex);
+        GameObject hexObject = hexMap[hex];
+        return hexObject;
+    }
 }

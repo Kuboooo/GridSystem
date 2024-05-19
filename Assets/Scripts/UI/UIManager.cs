@@ -8,12 +8,24 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
+    public static event Action<GameObject> OnPreviewingBuilding;
+    public static event Action<object, EventArgs> OnStopPreviewing;
+
+    public static void PreviewBuilding(GameObject buildingPrefab)
+    {
+        OnPreviewingBuilding?.Invoke(buildingPrefab);
+    }
+
+    public static void StopPreviewing()
+    {
+        OnStopPreviewing?.Invoke(null, EventArgs.Empty);
+    }
+
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Button building1;
     [SerializeField] private Button building2;
     [SerializeField] private Button cancelPreview;
     [SerializeField] private TextMeshProUGUI buildingsCount;
-    [SerializeField] private GameObject previewContainer;
     // TODO KUBO pull these somehow automatically out of some SOlist
     [SerializeField] private PreviewBuildingSO previewBuildingSO;
     [SerializeField] private PreviewBuildingSO previewBuildingSphereSO;
@@ -30,9 +42,7 @@ public class UIManager : MonoBehaviour {
             if (previewInstance != null) Destroy(previewInstance);
             ShowPreview(previewBuildingSphereSO.prefabToPreview.GameObject());
         });
-        cancelPreview.onClick.AddListener(() => {
-            previewing = false;
-        });
+        cancelPreview.onClick.AddListener(StopPreviewing);
         buildingsCount.text = "0";
     }
 
@@ -69,13 +79,7 @@ public class UIManager : MonoBehaviour {
     
     
     private void ShowPreview(GameObject prefab) {
-        previewing = true;
-
-        previewInstance = Instantiate(prefab, previewContainer.transform);
-        previewInstance.transform.localPosition = Vector3.zero;
-        previewInstance.transform.localRotation = Quaternion.identity;
-        previewInstance.transform.localScale = Vector3.one;
-
+        PreviewBuilding(prefab);
     }
 
 }

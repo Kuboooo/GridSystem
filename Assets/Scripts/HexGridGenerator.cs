@@ -3,37 +3,28 @@ using UnityEngine;
 
 public class HexGridGenerator : MonoBehaviour
 {
+    public static HexGridGenerator GetInstance() {
+        return instance;
+    }
+    public static HexGridGenerator instance;
+    
+
     public GameObject hexPrefab;
     public int gridWidth = 10;
     public int gridHeight = 10;
     public float hexSize = 1.0f;
     private RedBlockGridConverted.Layout layout;
     private Dictionary<RedBlockGridConverted.Hex, GameObject> hexMap;
-    private Camera cam;
 
-    private void Start()
+    private void Awake()
     {
-        cam = Camera.main;
+        instance = this;
         hexMap = new Dictionary<RedBlockGridConverted.Hex, GameObject>();
         GenerateGrid();
     }
 
      void Update() {
-         if (Input.GetMouseButtonDown(0)) {
-         
-             Vector3 mousePos = Input.mousePosition;
-             Ray ray = cam.ScreenPointToRay(mousePos);
-             if (Physics.Raycast(ray, out RaycastHit hit)) {
-                 RedBlockGridConverted.FractionalHex fractionalHex =
-                     RedBlockGridConverted.PixelToHex(layout, new RedBlockGridConverted.Point(hit.point.x, hit.point.z));
-                 RedBlockGridConverted.Hex hex = RedBlockGridConverted.HexRound(fractionalHex);
-                 GameObject hexObject = hexMap[hex];
-                 if (hexObject != null) {
-                     Destroy(hexObject);
-                     hexMap.Remove(hex);
-                 }
-             }
-         }
+
      }
 
     void GenerateGrid()
@@ -62,5 +53,13 @@ public class HexGridGenerator : MonoBehaviour
         Vector3 position = new Vector3((float)pos.x, 0, (float)pos.y);
         GameObject instantiate = Instantiate(hexPrefab, position, Quaternion.identity, transform);
         hexMap[hex] = instantiate;
+    }
+    
+    public RedBlockGridConverted.Layout GetLayout() {
+        return layout;
+    }
+    
+    public Dictionary<RedBlockGridConverted.Hex, GameObject> GetHexMap() {
+        return hexMap;
     }
 }
