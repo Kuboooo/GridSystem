@@ -151,15 +151,8 @@ public class RedBlockGridConverted
         return new Point(x + layout.origin.x, y + layout.origin.y);
     }
     
-    // FractionalHex PixelToHex(Layout layout, Point p)
-    // {
-    //     Orientation M = layout.orientation;
-    //     Point pt = new Point((p.x - layout.origin.x) / layout.size.x,
-    //         (p.y - layout.origin.y) / layout.size.y);
-    //     double q = M.b0 * pt.x + M.b1 * pt.y;
-    //     double r = M.b2 * pt.x + M.b3 * pt.y;
-    //     return new FractionalHex(q, r, -q - r);
-    // }
+
+
    public Point HexCornerOffset(Layout layout, int corner)
     {
         Point size = layout.size;
@@ -177,5 +170,52 @@ public class RedBlockGridConverted
             corners.Add(new Point(center.x + offset.x, center.y + offset.y));
         }
         return corners;
+    }
+    public static FractionalHex PixelToHex(Layout layout, Point p)
+    {
+        Orientation M = layout.orientation;
+        Point pt = new Point((p.x - layout.origin.x) / layout.size.x,
+            (p.y - layout.origin.y) / layout.size.y);
+        double q = M.b0 * pt.x + M.b1 * pt.y;
+        double r = M.b2 * pt.x + M.b3 * pt.y;
+        return new FractionalHex(q, r, -q - r);
+    }
+    public struct FractionalHex
+    {
+        public readonly double q;
+        public readonly double r;
+        public readonly double s;
+
+        public FractionalHex(double q_, double r_, double s_)
+        {
+            q = q_;
+            r = r_;
+            s = s_;
+        }
+    }
+    public static Hex HexRound(FractionalHex h)
+    {
+        int q = (int)Math.Round(h.q);
+        int r = (int)Math.Round(h.r);
+        int s = (int)Math.Round(h.s);
+
+        double q_diff = Math.Abs(q - h.q);
+        double r_diff = Math.Abs(r - h.r);
+        double s_diff = Math.Abs(s - h.s);
+
+        if (q_diff > r_diff && q_diff > s_diff)
+        {
+            q = -r - s;
+        }
+        else if (r_diff > s_diff)
+        {
+            r = -q - s;
+        }
+        else
+        {
+            s = -q - r;
+        }
+
+        return new Hex(q, r, s);
     }
 }

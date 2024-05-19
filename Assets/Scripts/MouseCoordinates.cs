@@ -8,7 +8,7 @@ public class MouseCoordinates : MonoBehaviour {
     private GameObject previous = null;
 
     void Update() {
-        HighlightTileOnMouseHover();
+        // HighlightTileOnMouseHover();
     }
 
     private void HighlightTileOnMouseHover() {
@@ -24,8 +24,8 @@ public class MouseCoordinates : MonoBehaviour {
         }
 
         if (Physics.Raycast(ray, out RaycastHit hit)) {
-            Debug.Log("Hit: " + hit.transform.gameObject.name);
-            Debug.Log("Hit parent name: " + hit.transform.parent.transform.name);
+            Debug.Log("Hit: " + hit.transform.position.x + " " + hit.transform.position.y + " " + hit.transform.position.z);
+            // Debug.Log("Hit parent name: " + hit.transform.parent.transform.name);
             Transform find = hit.transform.parent.transform.Find("Selected");
             if (find != null) {
                 find.GameObject().SetActive(true);
@@ -35,7 +35,7 @@ public class MouseCoordinates : MonoBehaviour {
             previous = hit.transform.parent.transform.gameObject;
         }
         else {
-            Debug.Log("missed");
+            // Debug.Log("missed");
 
         }
     }
