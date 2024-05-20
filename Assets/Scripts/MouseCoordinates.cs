@@ -7,18 +7,17 @@ using UnityEngine;
 public class MouseCoordinates : MonoBehaviour {
     public static event Action<object, EventArgs> OnBuildingBuilt;
 
-    public static void PreviewBuilding() {
-        OnBuildingBuilt?.Invoke(null, EventArgs.Empty);
-    }
-
     [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject map;
     private HexGridGenerator hexGridGenerator;
     private GameObject previous;
     private Dictionary<RedBlockGridConverted.Hex, GameObject> hexMap;
+
+    private Dictionary<RedBlockGridConverted.Hex, Boolean> buildingInfoMap = new();
+
     private RedBlockGridConverted.Layout layout;
 
-    private HashSet<GameObject> previewInstances = new HashSet<GameObject>();
+    private HashSet<GameObject> previewInstances = new();
     private GameObject previewInstance;
     private bool previewing;
     [SerializeField] private GameObject previewContainer;
@@ -52,6 +51,9 @@ public class MouseCoordinates : MonoBehaviour {
         hexGridGenerator = HexGridGenerator.GetInstance();
         hexMap = hexGridGenerator.GetHexMap();
         layout = hexGridGenerator.GetLayout();
+        foreach (KeyValuePair<RedBlockGridConverted.Hex, GameObject> pair in hexMap) {
+            buildingInfoMap.Add(pair.Key, false); // Initialize buildingInfoMap with all hexes();
+        }
     }
 
     void Update() {
@@ -110,6 +112,7 @@ public class MouseCoordinates : MonoBehaviour {
                     buildingInstance.transform.parent = map.transform;
                     hexMap.Remove(hex);
                     hexMap.Add(hex, buildingInstance);
+                    buildingInfoMap[hex] = true;
 
                     Destroy(hexObject);
                     previewing = false;
@@ -121,7 +124,7 @@ public class MouseCoordinates : MonoBehaviour {
     }
 
     private bool CanBuild(RedBlockGridConverted.Hex hex) {
-        return true;
+        return !buildingInfoMap[hex];
     }
 
     private GameObject GetHexFromRay(RaycastHit hit, out RedBlockGridConverted.Hex hex) {
@@ -136,6 +139,7 @@ public class MouseCoordinates : MonoBehaviour {
         foreach (GameObject preview in previewInstances) {
             Destroy(preview);
         }
+
         previewInstances.Clear();
         previewInstance = null;
     }

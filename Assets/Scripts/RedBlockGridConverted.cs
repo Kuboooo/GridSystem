@@ -6,7 +6,7 @@ using UnityEngine;
 public class RedBlockGridConverted
 {
 
-    public struct Hex {
+    public class Hex {
 
         public int q_;
         public int r_;
