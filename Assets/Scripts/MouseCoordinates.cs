@@ -13,7 +13,7 @@ public class MouseCoordinates : MonoBehaviour {
     private GameObject previous;
     private Dictionary<RedBlockGridConverted.Hex, GameObject> hexMap;
 
-    private Dictionary<RedBlockGridConverted.Hex, Boolean> buildingInfoMap = new();
+    private Dictionary<RedBlockGridConverted.Hex, Boolean> buildingsMap = new();
 
     private RedBlockGridConverted.Layout layout;
 
@@ -51,9 +51,6 @@ public class MouseCoordinates : MonoBehaviour {
         hexGridGenerator = HexGridGenerator.GetInstance();
         hexMap = hexGridGenerator.GetHexMap();
         layout = hexGridGenerator.GetLayout();
-        foreach (KeyValuePair<RedBlockGridConverted.Hex, GameObject> pair in hexMap) {
-            buildingInfoMap.Add(pair.Key, false); // Initialize buildingInfoMap with all hexes();
-        }
     }
 
     void Update() {
@@ -112,7 +109,7 @@ public class MouseCoordinates : MonoBehaviour {
                     buildingInstance.transform.parent = map.transform;
                     hexMap.Remove(hex);
                     hexMap.Add(hex, buildingInstance);
-                    buildingInfoMap[hex] = true;
+                    buildingsMap[hex] = true;
 
                     Destroy(hexObject);
                     previewing = false;
@@ -124,7 +121,7 @@ public class MouseCoordinates : MonoBehaviour {
     }
 
     private bool CanBuild(RedBlockGridConverted.Hex hex) {
-        return !buildingInfoMap[hex];
+        return !buildingsMap.ContainsKey(hex);
     }
 
     private GameObject GetHexFromRay(RaycastHit hit, out RedBlockGridConverted.Hex hex) {
