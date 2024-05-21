@@ -7,12 +7,12 @@ using UnityEngine.UI;
 namespace UI {
     public class UIManager : MonoBehaviour {
 
-        public static event Action<GameObject> OnPreviewingBuilding;
+        public static event Action<PreviewBuildingSO> OnPreviewingBuilding;
         public static event Action<object, EventArgs> OnStopPreviewing;
 
-        private static void PreviewBuilding(GameObject buildingPrefab)
+        private static void PreviewBuilding(PreviewBuildingSO buildingSO)
         {
-            OnPreviewingBuilding?.Invoke(buildingPrefab);
+            OnPreviewingBuilding?.Invoke(buildingSO);
         }
 
         private static void StopPreviewing()
@@ -34,11 +34,12 @@ namespace UI {
         private void Awake() {
             building1.onClick.AddListener(() => {
                 if (previewInstance != null) Destroy(previewInstance);
-                ShowPreview(previewBuildingSO.prefabToPreview.GameObject());
+                // ShowPreview(previewBuildingSO.prefabToPreview.GameObject());
+                ShowPreview(previewBuildingSO);
             });        
             building2.onClick.AddListener(() => {
                 if (previewInstance != null) Destroy(previewInstance);
-                ShowPreview(previewBuildingSphereSO.prefabToPreview.GameObject());
+                ShowPreview(previewBuildingSphereSO);
             });
             cancelPreview.onClick.AddListener(StopPreviewing);
             
@@ -58,8 +59,8 @@ namespace UI {
             buildingsCount.text = Convert.ToString(Convert.ToInt32(buildingsCount.text) + 1);
         }
     
-        private void ShowPreview(GameObject prefab) {
-            PreviewBuilding(prefab);
+        private void ShowPreview(PreviewBuildingSO previewBuildingSo) {
+            PreviewBuilding(previewBuildingSo);
         }
 
     }

@@ -12,45 +12,45 @@ public class HexGridGenerator : MonoBehaviour {
     public int gridWidth = 10;
     public int gridHeight = 10;
     public float hexSize = 1.0f;
-    private RedBlockGridConverted.Layout layout;
-    private Dictionary<RedBlockGridConverted.Hex, GameObject> hexMap;
+    private RedblockGrid.Layout layout;
+    private Dictionary<RedblockGrid.Hex, GameObject> hexMap;
 
     private void Awake() {
         instance = this;
-        hexMap = new Dictionary<RedBlockGridConverted.Hex, GameObject>();
+        hexMap = new Dictionary<RedblockGrid.Hex, GameObject>();
         GenerateGrid();
     }
 
     void GenerateGrid() {
-        layout = new RedBlockGridConverted.Layout(
-            RedBlockGridConverted.Orientation.LayoutPointy(),
-            new RedBlockGridConverted.Point(hexSize, hexSize),
-            new RedBlockGridConverted.Point(0, 0)
+        layout = new RedblockGrid.Layout(
+            RedblockGrid.Orientation.LayoutPointy(),
+            new RedblockGrid.Point(hexSize, hexSize),
+            new RedblockGrid.Point(0, 0)
         );
 
         for (int q = -gridWidth; q <= gridWidth; q++) {
             int r1 = Mathf.Max(-gridWidth, -q - gridWidth);
             int r2 = Mathf.Min(gridHeight, -q + gridHeight);
             for (int r = r1; r <= r2; r++) {
-                RedBlockGridConverted.Hex hex = new RedBlockGridConverted.Hex(q, r, -q - r);
+                RedblockGrid.Hex hex = new RedblockGrid.Hex(q, r, -q - r);
                 CreateHex(hex);
             }
         }
     }
 
-    void CreateHex(RedBlockGridConverted.Hex hex) {
-        RedBlockGridConverted converted = new RedBlockGridConverted();
-        RedBlockGridConverted.Point pos = converted.HexToPixel(layout, hex);
+    void CreateHex(RedblockGrid.Hex hex) {
+        RedblockGrid converted = new RedblockGrid();
+        RedblockGrid.Point pos = converted.HexToPixel(layout, hex);
         Vector3 position = new Vector3((float)pos.x, 0, (float)pos.y);
         GameObject instantiate = Instantiate(hexPrefab, position, Quaternion.identity, transform);
         hexMap[hex] = instantiate;
     }
 
-    public RedBlockGridConverted.Layout GetLayout() {
+    public RedblockGrid.Layout GetLayout() {
         return layout;
     }
 
-    public Dictionary<RedBlockGridConverted.Hex, GameObject> GetHexMap() {
+    public Dictionary<RedblockGrid.Hex, GameObject> GetHexMap() {
         return hexMap;
     }
 }

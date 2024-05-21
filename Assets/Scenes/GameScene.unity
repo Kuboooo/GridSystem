@@ -1725,8 +1725,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexPrefab: {fileID: 1123567565558726044, guid: f0b9ae5d590e11b4e80575a81bbd9869,
     type: 3}
-  gridWidth: 3
-  gridHeight: 3
+  gridWidth: 1
+  gridHeight: 1
   hexSize: 15
 --- !u!1 &1341484985
 GameObject:
@@ -1974,6 +1974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258dc6bd2918c924a9df3e6be6b950e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: e10e72f4470345446baf7bed386909fb, type: 2}
   mainCamera: {fileID: 330585545}
   map: {fileID: 1304851156}
   previewContainer: {fileID: 1877683296}
@@ -2298,7 +2299,7 @@ Transform:
   m_GameObject: {fileID: 1877683296}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 761, y: 587, z: 0}
+  m_LocalPosition: {x: 761, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
