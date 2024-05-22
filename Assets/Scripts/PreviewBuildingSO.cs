@@ -7,5 +7,7 @@ public class PreviewBuildingSO : ScriptableObject
 {
     public GameObject prefabToPreview;
     public GameObject prefabToBuild;
+    public int basePopulationGrowth;
     public int tileSize;
+    public int cost;
 }

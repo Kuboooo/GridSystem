@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b064bfede1fdb3a4799d26e268a9250f, type: 3}
-  m_Name: PreviewBuildingCubeSO
+  m_Name: PreviewBuildingVillageSO
   m_EditorClassIdentifier: 
   prefabToPreview: {fileID: 6767105265755652916, guid: 5d70316c0bd5d8f45b34c5513aa14d59,
     type: 3}
   prefabToBuild: {fileID: 6767105265755652916, guid: 230cdfb370d7c9640a0973f7591676fe,
     type: 3}
+  basePopulationGrowth: 5
   tileSize: 1
+  cost: 500

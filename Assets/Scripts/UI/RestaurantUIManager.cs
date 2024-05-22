@@ -1,9 +1,14 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace UI {
     public class RestaurantUIManager : MonoBehaviour {
+
+        public static event Action<int> OnToppingsSelected;
+
+
         [SerializeField] private Button savePizza;
         [SerializeField] private Button cancelPizza;
 
@@ -80,6 +85,7 @@ namespace UI {
         private void SaveRecipe() {
             int combinationValue = ToppingsOrganizer.GetCombinationValue(selectedTopping1, selectedTopping2);
             Debug.Log("Saving toppings " + selectedTopping1 + " and " + selectedTopping2 + " with value " + combinationValue);
+            OnToppingsSelected?.Invoke(combinationValue);
         }
 
         private void CancelRecipe() {

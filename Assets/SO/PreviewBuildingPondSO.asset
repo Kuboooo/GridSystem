@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b064bfede1fdb3a4799d26e268a9250f, type: 3}
-  m_Name: PreviewBuildingSphereSO
+  m_Name: PreviewBuildingPondSO
   m_EditorClassIdentifier: 
   prefabToPreview: {fileID: 3134691123110589651, guid: d239bc3df3277cc43805c83208d3f8d2,
     type: 3}
   prefabToBuild: {fileID: 3134691123110589651, guid: 49d0da0e8af8aeb4282a24fd1d37ab1c,
     type: 3}
+  basePopulationGrowth: 1
   tileSize: 1
+  cost: 100

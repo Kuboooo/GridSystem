@@ -24,11 +24,12 @@ namespace UI {
         [SerializeField] private Button building2;
         [SerializeField] private Button building3;
         [SerializeField] private Button cancelPreview;
-        [SerializeField] private TextMeshProUGUI buildingsCount;
+        [SerializeField] private TextMeshProUGUI populationCount;
+        [SerializeField] private TextMeshProUGUI moneyCount;
         // TODO KUBO pull these somehow automatically out of some SOlist
-        [SerializeField] private PreviewBuildingSO previewBuildingSO;
-        [SerializeField] private PreviewBuildingSO previewBuildingSphereSO;
-        [SerializeField] private PreviewBuildingSO previewBuildingThreeHexSO;
+        [SerializeField] private PreviewBuildingSO previewBuildingVillageSO;
+        [SerializeField] private PreviewBuildingSO previewBuildingPondSO;
+        [SerializeField] private PreviewBuildingSO previewBuildingPizzeriaSO;
 
         [SerializeField] private Button hideBuildingUIButton;
         [SerializeField] private GameObject buildingUIToHide;
@@ -37,17 +38,33 @@ namespace UI {
         [SerializeField] private Button hideRestaurantUIButton;
         [SerializeField] private GameObject restaurantUIToHide;
         [SerializeField] private GameObject gridUIToHide;
+        private float currentIncome = 0f;
+        private float incomePerPopulation = 1f;
+        private int pizzaValue = 1;
+
+        private float timeSinceLastAction = 0f;
+        private float interval = 10f; // Interval in seconds
+
+
+
+        private int currentPopulation = 1;
 
         private void Start() {
             building1.onClick.AddListener(() => {
-                ShowPreview(previewBuildingSO);
+                if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
+                    ShowPreview(previewBuildingVillageSO);
+                }
             });        
             building2.onClick.AddListener(() => {
-                ShowPreview(previewBuildingSphereSO);
+                if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
+                ShowPreview(previewBuildingPondSO);
+                }
             });
                         
             building3.onClick.AddListener(() => {
-                ShowPreview(previewBuildingThreeHexSO);
+                if (int.Parse(moneyCount.text) >= previewBuildingPizzeriaSO.cost) {
+                    ShowPreview(previewBuildingPizzeriaSO);
+                }
             });
             
             hideBuildingUIButton.onClick.AddListener(() => {
@@ -63,22 +80,63 @@ namespace UI {
             
             cancelPreview.onClick.AddListener(StopPreviewing);
             
-            buildingsCount.text = "0";
+            populationCount.text = "5";
+            moneyCount.text = "50";
+        }
+
+        private void Update() {
+            timeSinceLastAction += Time.deltaTime;
+            if (timeSinceLastAction >= interval) {
+                currentIncome = currentPopulation * incomePerPopulation * pizzaValue;
+
+                moneyCount.text = (currentIncome + int.Parse(moneyCount.text)).ToString();
+                timeSinceLastAction = 0f;
+            }
+
+            enableButtons();
+
+            }
+
+        private void enableButtons() {
+if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
+                building1.interactable = true;
+            } else {
+                building1.interactable = false;
+            }
+            if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
+                building2.interactable = true;
+            } else {
+                building2.interactable = false;
+            }
+            if (int.Parse(moneyCount.text) >= previewBuildingPizzeriaSO.cost) {
+                building3.interactable = true;
+            } else {
+                building3.interactable = false;
+            }
         }
 
         private void OnEnable() {
-            
+
             MouseCoordinates.OnBuildingBuilt += OnBuildingBuilt;
+            RestaurantUIManager.OnToppingsSelected += OnToppingsSelected;
         }
         
         private void OnDisable() {
             MouseCoordinates.OnBuildingBuilt -= OnBuildingBuilt;
+            RestaurantUIManager.OnToppingsSelected -= OnToppingsSelected;
         }
 
-        private void OnBuildingBuilt(object arg1, EventArgs arg2) {
-            buildingsCount.text = Convert.ToString(Convert.ToInt32(buildingsCount.text) + 1);
+        private void OnToppingsSelected(int toppingsValue) {
+            pizzaValue = toppingsValue;
         }
-    
+
+        private void OnBuildingBuilt(object arg1, PreviewBuildingSO previewBuildingSO) {
+            currentPopulation += previewBuildingSO.basePopulationGrowth;
+            moneyCount.text = (int.Parse(moneyCount.text) - previewBuildingSO.cost).ToString();
+
+            populationCount.text = currentPopulation.ToString();
+        }
+ 
         private void ShowPreview(PreviewBuildingSO previewBuildingSo) {
             PreviewBuilding(previewBuildingSo);
         }

@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UI;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MouseCoordinates : MonoBehaviour {
-    public static event Action<object, EventArgs> OnBuildingBuilt;
+
+    private const string HEX_HOVER_IDENTIFIER = "Selected";
+
+
+    public static event Action<object, PreviewBuildingSO> OnBuildingBuilt;
     public Material material;
     private Material backupMaterial;
 
@@ -72,8 +77,8 @@ public class MouseCoordinates : MonoBehaviour {
 
     void HighlightTileOnMouseHover() {
         if (previous != null) {
-            if (previous.transform.Find("Selected") != null) {
-                previous.transform.Find("Selected").GameObject().SetActive(false);
+            if (previous.transform.Find(HEX_HOVER_IDENTIFIER) != null) {
+                previous.transform.Find(HEX_HOVER_IDENTIFIER).GameObject().SetActive(false);
             }
 
             previous = null;
@@ -83,8 +88,8 @@ public class MouseCoordinates : MonoBehaviour {
         Ray ray = mainCamera.ScreenPointToRay(mousePos);
         if (Physics.Raycast(ray, out RaycastHit hit)) {
             GameObject hexObject = GetHexFromRay(hit, out RedblockGrid.Hex hex);
-            if (hexObject != null && hexObject.transform.Find("Selected") != null) {
-                Transform find = hexObject.transform.Find("Selected");
+            if (hexObject != null && hexObject.transform.Find(HEX_HOVER_IDENTIFIER) != null) {
+                Transform find = hexObject.transform.Find(HEX_HOVER_IDENTIFIER);
                 find.GameObject().SetActive(true);
                 previous = hexObject;
             }
@@ -99,7 +104,7 @@ public class MouseCoordinates : MonoBehaviour {
             DestroyPreviewInstance();
         }
         else {
-            if (Input.GetKeyDown(KeyCode.Q)) {
+            if (Input.GetKeyDown(KeyCode.X)) {
                 previewInstance.transform.rotation *= Quaternion.Euler(0, 60, 0);
                 currentRotation = (currentRotation + 1) % 6; // Increment rotation and wrap around every 6 steps
             }
@@ -110,9 +115,8 @@ public class MouseCoordinates : MonoBehaviour {
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 GameObject hexObject = GetHexFromRay(hit, out RedblockGrid.Hex hex);
-                if (hexObject != null)
-                {
-                    
+                if (hexObject != null) {
+
                     List<RedblockGrid.Hex> hexesToBuild = previewBuildingSO.tileSize == 1 ? new List<RedblockGrid.Hex> {
                         hex
                     } : CalculateBuildingHexes(hex, currentRotation);
@@ -122,14 +126,14 @@ public class MouseCoordinates : MonoBehaviour {
                     bool canBuild = CanBuild(hexesToBuild);
                     UpdatePreviewColor(canBuild);
 
-                    if (Input.GetMouseButtonDown(0) && previewInstance != null && canBuild)
-                    {
-                        Vector3 buildPosition = new Vector3(previewInstance.transform.position.x, 0f, previewInstance.transform.position.z);
+                    if (Input.GetMouseButtonDown(0) && previewInstance != null && canBuild) {
+                        if (!EventSystem.current.IsPointerOverGameObject()) {
+
+                            Vector3 buildPosition = new Vector3(previewInstance.transform.position.x, 0f, previewInstance.transform.position.z);
                         GameObject buildingInstance = Instantiate(buildingToBuild, buildPosition, previewInstance.transform.rotation);
                         buildingInstance.transform.parent = map.transform;
 
-                        foreach (var buildHex in hexesToBuild)
-                        {
+                        foreach (var buildHex in hexesToBuild) {
                             hexMap.TryGetValue(buildHex, out GameObject hexObjectPart);
                             Destroy(hexObjectPart);
                             hexMap.Remove(buildHex);
@@ -141,8 +145,9 @@ public class MouseCoordinates : MonoBehaviour {
                         previewing = false;
                         currentRotation = 3;
                         DestroyPreviewInstance();
-                        OnBuildingBuilt?.Invoke(null, EventArgs.Empty);
+                        OnBuildingBuilt?.Invoke(null, previewBuildingSO);
                     }
+                }
                 }
             }
         }
@@ -166,7 +171,7 @@ public class MouseCoordinates : MonoBehaviour {
     {
         foreach (var hex in hexes)
         {
-            if (buildingsMap.ContainsKey(hex))
+            if (buildingsMap.ContainsKey(hex) || !hexMap.ContainsKey(hex))
             {
                 return false;
             }
