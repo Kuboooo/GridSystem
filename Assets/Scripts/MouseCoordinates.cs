@@ -23,6 +23,9 @@ public class MouseCoordinates : MonoBehaviour {
     private GameObject previewInstance;
     private GameObject buildingToBuild;
     private bool previewing;
+    private PreviewBuildingSO previewBuildingSO;
+    private int currentRotation = 3; // Track the current rotation in multiples of 60 degrees
+
     [SerializeField] private GameObject previewContainer;
 
     private void OnEnable() {
@@ -43,6 +46,7 @@ public class MouseCoordinates : MonoBehaviour {
     private void OnPreviewingBuilding(PreviewBuildingSO previewBuildingSo) {
         previewing = true;
         DestroyPreviewInstance();
+        previewBuildingSO = previewBuildingSo;
         previewInstance = Instantiate(previewBuildingSo.prefabToPreview, previewContainer.transform);
         buildingToBuild = previewBuildingSo.prefabToBuild;
         previewInstance.transform.localPosition = Vector3.zero;
@@ -97,48 +101,88 @@ public class MouseCoordinates : MonoBehaviour {
         else {
             if (Input.GetKeyDown(KeyCode.Q)) {
                 previewInstance.transform.rotation *= Quaternion.Euler(0, 60, 0);
+                currentRotation = (currentRotation + 1) % 6; // Increment rotation and wrap around every 6 steps
             }
 
             Vector3 mousePos = Input.mousePosition;
             Ray ray = mainCamera.ScreenPointToRay(mousePos);
 
-            if (Physics.Raycast(ray, out RaycastHit hit)) {
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
                 GameObject hexObject = GetHexFromRay(hit, out RedblockGrid.Hex hex);
-                previewInstance.transform.position =
-                    new Vector3(hexObject.transform.position.x, 1.5f, hexObject.transform.position.z);
+                if (hexObject != null)
+                {
+                    
+                    List<RedblockGrid.Hex> hexesToBuild = previewBuildingSO.tileSize == 1 ? new List<RedblockGrid.Hex> {
+                        hex
+                    } : CalculateBuildingHexes(hex, currentRotation);
 
-                Boolean canBuild = CanBuild(hex);
-                // todo kubo this needs rework - the find should be searching only for 1  for all buildings so buildings need to somehow flag the tile that it's there
-                if (Input.GetMouseButtonDown(0) && previewInstance != null && canBuild) {
-                    Vector3 position = new Vector3(previewInstance.transform.position.x, 0f,
-                        previewInstance.transform.position.z);
-                    GameObject buildingInstance = Instantiate(buildingToBuild, position,
-                        previewInstance.transform.rotation);
-                    buildingInstance.transform.parent = map.transform;
-                    hexMap.Remove(hex);
-                    hexMap.Add(hex, buildingInstance);
-                    buildingsMap[hex] = true;
+                    Vector3 position = hexObject.transform.position;
+                    previewInstance.transform.position = new Vector3((float)RedblockGrid.HexToPixel(layout, hex).x, 1.5f, (float)RedblockGrid.HexToPixel(layout, hex).y);
+                    bool canBuild = CanBuild(hexesToBuild);
+                    UpdatePreviewColor(canBuild);
 
-                    Destroy(hexObject);
-                    previewing = false;
-                    DestroyPreviewInstance();
-                    OnBuildingBuilt?.Invoke(null, EventArgs.Empty);
+                    if (Input.GetMouseButtonDown(0) && previewInstance != null && canBuild)
+                    {
+                        Vector3 buildPosition = new Vector3(previewInstance.transform.position.x, 0f, previewInstance.transform.position.z);
+                        GameObject buildingInstance = Instantiate(buildingToBuild, buildPosition, previewInstance.transform.rotation);
+                        buildingInstance.transform.parent = map.transform;
+
+                        foreach (var buildHex in hexesToBuild)
+                        {
+                            hexMap.TryGetValue(buildHex, out GameObject hexObjectPart);
+                            Destroy(hexObjectPart);
+                            hexMap.Remove(buildHex);
+                            hexMap.Add(buildHex, buildingInstance);
+                            buildingsMap[buildHex] = true;
+                        }
+
+                        // Destroy(hexObject);
+                        previewing = false;
+                        currentRotation = 3;
+                        DestroyPreviewInstance();
+                        OnBuildingBuilt?.Invoke(null, EventArgs.Empty);
+                    }
                 }
             }
         }
     }
 
-    private bool CanBuild(RedblockGrid.Hex hex) {
-        material.SetColor("_BaseColor",
-            buildingsMap.ContainsKey(hex) ? Color.red : Color.green);
-        return !buildingsMap.ContainsKey(hex);
+    private List<RedblockGrid.Hex> CalculateBuildingHexes(RedblockGrid.Hex baseHex, int rotation)
+    {
+        List<RedblockGrid.Hex> hexesToBuild = new List<RedblockGrid.Hex> { baseHex };
+
+        // Rotate the direction indices based on the current rotation
+        int direction1 = (0 + rotation) % 6;
+        int direction2 = (1 + rotation) % 6;
+
+        hexesToBuild.Add(RedblockGrid.Hex.HexNeighbor(baseHex, direction1)); // First neighbor based on rotation
+        hexesToBuild.Add(RedblockGrid.Hex.HexNeighbor(baseHex, direction2)); // Second neighbor based on rotation
+
+        return hexesToBuild;
+    }
+
+    private bool CanBuild(List<RedblockGrid.Hex> hexes)
+    {
+        foreach (var hex in hexes)
+        {
+            if (buildingsMap.ContainsKey(hex))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void UpdatePreviewColor(bool canBuild)
+    {
+        material.SetColor("_BaseColor", canBuild ? Color.green : Color.red);
     }
 
     private GameObject GetHexFromRay(RaycastHit hit, out RedblockGrid.Hex hex) {
-        RedblockGrid.FractionalHex fractionalHex =
-            RedblockGrid.PixelToHex(layout, new RedblockGrid.Point(hit.point.x, hit.point.z));
+        RedblockGrid.FractionalHex fractionalHex = RedblockGrid.PixelToHex(layout, new RedblockGrid.Point(hit.point.x, hit.point.z));
         hex = RedblockGrid.HexRound(fractionalHex);
-        GameObject hexObject = hexMap[hex];
+        hexMap.TryGetValue(hex, out GameObject hexObject);
         return hexObject;
     }
 
@@ -149,5 +193,6 @@ public class MouseCoordinates : MonoBehaviour {
 
         previewInstances.Clear();
         previewInstance = null;
+        currentRotation = 3;
     }
 }

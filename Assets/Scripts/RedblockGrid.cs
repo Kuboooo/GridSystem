@@ -143,7 +143,7 @@ public class RedblockGrid
             y = y_;
         }
     }
-    public Point HexToPixel(Layout layout, Hex h)
+    public static Point HexToPixel(Layout layout, Hex h)
     {
         Orientation M = layout.orientation;
         double x = (M.f0 * h.q_ + M.f1 * h.r_) * layout.size.x;

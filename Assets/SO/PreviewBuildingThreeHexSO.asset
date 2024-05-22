@@ -16,3 +16,4 @@ MonoBehaviour:
     type: 3}
   prefabToBuild: {fileID: 8378871560928740839, guid: bb4d877d82d4b704399bdbdde69ecb14,
     type: 3}
+  tileSize: 3

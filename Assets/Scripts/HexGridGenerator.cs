@@ -39,8 +39,7 @@ public class HexGridGenerator : MonoBehaviour {
     }
 
     void CreateHex(RedblockGrid.Hex hex) {
-        RedblockGrid converted = new RedblockGrid();
-        RedblockGrid.Point pos = converted.HexToPixel(layout, hex);
+        RedblockGrid.Point pos = RedblockGrid.HexToPixel(layout, hex);
         Vector3 position = new Vector3((float)pos.x, 0, (float)pos.y);
         GameObject instantiate = Instantiate(hexPrefab, position, Quaternion.identity, transform);
         hexMap[hex] = instantiate;
