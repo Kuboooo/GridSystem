@@ -30,6 +30,11 @@ public class CameraController : MonoBehaviour {
         newZoom = cameraTransform.localPosition;
     }
 
+    private void Update() {
+        HandleMouseInput();
+        handleMovement();
+    }
+
     private void HandleMouseInput() {
         // todo kubo handle min/max scroll and movement
         if (Input.mouseScrollDelta.y != 0) {

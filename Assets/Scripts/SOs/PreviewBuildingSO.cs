@@ -10,4 +10,5 @@ public class PreviewBuildingSO : ScriptableObject
     public int basePopulationGrowth;
     public int tileSize;
     public int cost;
+    public int[] roads;
 }

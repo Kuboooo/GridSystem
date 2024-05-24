@@ -12,6 +12,8 @@ public class RedblockGrid
         public int r_;
         public int s_;
 
+        private bool[] connections = new bool[6];
+
         public Hex(int q, int r, int s) {
             q_ = q;
             r_ = r;
@@ -80,7 +82,28 @@ public class RedblockGrid
             return HexAdd(hex, HexDirection(direction));
         }
 
+        public void AddConnection(int edgeDirection) {
+            if (edgeDirection < 0 || edgeDirection >= 6) {
+                throw new ArgumentOutOfRangeException(nameof(edgeDirection), "Edge direction must be between 0 and 5.");
+            }
+            connections[edgeDirection] = true;
+        }
         
+        public void AddConnections(int[] edgeDirections) {
+            for (int i = 0; i < edgeDirections.Length; i++) {
+                if (edgeDirections[i] < 0 || edgeDirections[i] >= 6) {
+                    throw new ArgumentOutOfRangeException(nameof(edgeDirections), "Edge direction must be between 0 and 5.");
+                }
+                connections[edgeDirections[i]] = true;
+            }
+        }
+
+        public bool HasConnection(int edgeDirection) {
+            if (edgeDirection < 0 || edgeDirection >= 6) {
+                throw new ArgumentOutOfRangeException(nameof(edgeDirection), "Edge direction must be between 0 and 5.");
+            }
+            return connections[edgeDirection];
+        }
     }
   public  struct Orientation
     {

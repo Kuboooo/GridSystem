@@ -20,9 +20,9 @@ namespace UI {
             OnStopPreviewing?.Invoke(null, EventArgs.Empty);
         }
 
-        [SerializeField] private Button building1;
-        [SerializeField] private Button building2;
-        [SerializeField] private Button building3;
+        [SerializeField] private Button natureButton;
+        [SerializeField] private Button buildingButton;
+        [SerializeField] private Button bigBuildingButton;
         [SerializeField] private Button cancelPreview;
         [SerializeField] private TextMeshProUGUI populationCount;
         [SerializeField] private TextMeshProUGUI moneyCount;
@@ -50,21 +50,23 @@ namespace UI {
         private int currentPopulation = 1;
 
         private void Start() {
-            building1.onClick.AddListener(() => {
-                if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
-                    ShowPreview(previewBuildingVillageSO);
-                }
-            });        
-            building2.onClick.AddListener(() => {
+            natureButton.onClick.AddListener(() => {
+                Debug.Log("natureButton button 1 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
                 ShowPreview(previewBuildingPondSO);
-                }
+            }
             });
-                        
-            building3.onClick.AddListener(() => {
+            buildingButton.onClick.AddListener(() => {
+                Debug.Log("buildingButton button 2 clicked");
+                if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
+                    ShowPreview(previewBuildingVillageSO);
+            }
+            });
+            bigBuildingButton.onClick.AddListener(() => {
+                Debug.Log("bigBuildingButton button 3 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPizzeriaSO.cost) {
                     ShowPreview(previewBuildingPizzeriaSO);
-                }
+            }
             });
             
             hideBuildingUIButton.onClick.AddListener(() => {
@@ -78,7 +80,11 @@ namespace UI {
                 gridUIToHide.SetActive(!gridUIToHide.activeInHierarchy);
             });
             
-            cancelPreview.onClick.AddListener(StopPreviewing);
+            cancelPreview.onClick.AddListener ( () => {
+                Debug.Log("cancelPreview button clicked");
+                StopPreviewing();
+            } );
+
             
             populationCount.text = "5";
             moneyCount.text = "50";
@@ -95,23 +101,23 @@ namespace UI {
 
             enableButtons();
 
-            }
+        }
 
         private void enableButtons() {
-if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
-                building1.interactable = true;
+            if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
+                buildingButton.interactable = true;
             } else {
-                building1.interactable = false;
+                buildingButton.interactable = false;
             }
             if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
-                building2.interactable = true;
+                natureButton.interactable = true;
             } else {
-                building2.interactable = false;
+                natureButton.interactable = false;
             }
             if (int.Parse(moneyCount.text) >= previewBuildingPizzeriaSO.cost) {
-                building3.interactable = true;
+                bigBuildingButton.interactable = true;
             } else {
-                building3.interactable = false;
+                bigBuildingButton.interactable = false;
             }
         }
 

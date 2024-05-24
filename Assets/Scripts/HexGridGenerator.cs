@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Android;
 
 public class HexGridGenerator : MonoBehaviour {
     public static HexGridGenerator GetInstance() {

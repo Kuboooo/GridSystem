@@ -19,3 +19,4 @@ MonoBehaviour:
   basePopulationGrowth: 1
   tileSize: 1
   cost: 100
+  roads: 010000000300000005000000

@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UI;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class MouseCoordinates : MonoBehaviour {
+
+    private RedblockGrid.Hex start = null;
+    private RedblockGrid.Hex goal = null;
 
     private const string HEX_HOVER_IDENTIFIER = "Selected";
 
@@ -29,7 +33,10 @@ public class MouseCoordinates : MonoBehaviour {
     private GameObject buildingToBuild;
     private bool previewing;
     private PreviewBuildingSO previewBuildingSO;
-    private int currentRotation = 3; // Track the current rotation in multiples of 60 degrees
+    private int currentRotation; // Track the current rotation in multiples of 60 degrees
+    private int singleCurrentRotation = 0; // Track the current rotation in multiples of 60 degrees
+    private int initialRotation = 3; // Track the current rotation in multiples of 60 degrees
+    private int singleInitialRotation = 0; // Track the current rotation in multiples of 60 degrees
 
     [SerializeField] private GameObject previewContainer;
 
@@ -69,9 +76,57 @@ public class MouseCoordinates : MonoBehaviour {
     void Update() {
         HighlightTileOnMouseHover();
         ShowPreview();
-        if (Input.GetKeyDown(KeyCode.Escape)) {
-            previewing = false;
-            DestroyPreviewInstance();
+        FindPath();
+    }
+
+    private void FindPath() {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+            if (Input.GetMouseButtonDown(0)) {
+            Vector3 mousePos = Input.mousePosition;
+            Ray ray = mainCamera.ScreenPointToRay(mousePos);
+            if (Physics.Raycast(ray, out RaycastHit hit)) {
+                GameObject hexObject = GetHexFromRay(hit, out RedblockGrid.Hex hex);
+                if (hex is not null) {
+                    start = hexMap.Keys.FirstOrDefault(k => k == hex);
+                    hexObject.transform.Find("Selected").transform.gameObject.SetActive(true);
+                }
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1)) {
+            Vector3 mousePos = Input.mousePosition;
+            Ray ray = mainCamera.ScreenPointToRay(mousePos);
+            if (Physics.Raycast(ray, out RaycastHit hit)) {
+                GameObject hexObject = GetHexFromRay(hit, out RedblockGrid.Hex hex);
+                if (hex is not null) {
+                    goal = hexMap.Keys.FirstOrDefault(k => k == hex);
+                    hexObject.transform.Find("Selected").transform.gameObject.SetActive(true);
+                }
+            }
+        }
+
+        if ( start is not null && goal is not null ) {
+            GameObject hexGameObject;
+
+            Func<RedblockGrid.Hex, RedblockGrid.Hex, int, int, bool> isWalkable = (currentHex,neighbourHex, neghbourCount, neigbourEdge) => {
+                return true;
+            };
+
+            List<RedblockGrid.Hex> path = HexPathfinding.FindPath(start, goal, hexMap,isWalkable);
+
+            if (path != null) {
+                Debug.Log("Path found:");
+                foreach (var hex in path) {
+                    hexGameObject = hexMap[hex];
+                    hexGameObject.transform.Find("Selected").transform.gameObject.SetActive(true);
+                    start = null;
+                    goal = null;
+                }
+            } else {
+                Debug.Log("No path found.");
+                start = null;
+                goal = null;
+            }
         }
     }
 
@@ -100,13 +155,19 @@ public class MouseCoordinates : MonoBehaviour {
     }
 
     private void ShowPreview() {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            previewing = false;
+            DestroyPreviewInstance();
+        }
         if (!previewing) {
             DestroyPreviewInstance();
         }
         else {
+
             if (Input.GetKeyDown(KeyCode.X)) {
                 previewInstance.transform.rotation *= Quaternion.Euler(0, 60, 0);
                 currentRotation = (currentRotation + 1) % 6; // Increment rotation and wrap around every 6 steps
+                singleCurrentRotation = (singleCurrentRotation + 1) % 6; // Increment rotation and wrap around every 6 steps
             }
 
             Vector3 mousePos = Input.mousePosition;
@@ -137,13 +198,18 @@ public class MouseCoordinates : MonoBehaviour {
                             hexMap.TryGetValue(buildHex, out GameObject hexObjectPart);
                             Destroy(hexObjectPart);
                             hexMap.Remove(buildHex);
+                                int[] newRoads = new int[previewBuildingSO.roads.Length];
+                                for (int i = 0; i < newRoads.Length; i++) {
+                                    newRoads[i] = ((previewBuildingSO.roads[i] + singleCurrentRotation) % 6);
+                                }
+                            buildHex.AddConnections(newRoads);
                             hexMap.Add(buildHex, buildingInstance);
                             buildingsMap[buildHex] = true;
                         }
 
-                        // Destroy(hexObject);
                         previewing = false;
-                        currentRotation = 3;
+                        currentRotation = initialRotation;
+                        singleCurrentRotation = singleInitialRotation;
                         DestroyPreviewInstance();
                         OnBuildingBuilt?.Invoke(null, previewBuildingSO);
                     }
@@ -198,6 +264,7 @@ public class MouseCoordinates : MonoBehaviour {
 
         previewInstances.Clear();
         previewInstance = null;
-        currentRotation = 3;
+        currentRotation = initialRotation;
+        singleCurrentRotation = singleInitialRotation;
     }
 }
