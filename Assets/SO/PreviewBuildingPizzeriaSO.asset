@@ -19,4 +19,7 @@ MonoBehaviour:
   basePopulationGrowth: 30
   tileSize: 3
   cost: 1000
-  roads: 00000000
+  roads:
+  - roadArray: 0100000004000000
+  - roadArray: 0300000005000000
+  - roadArray: 010000000200000004000000

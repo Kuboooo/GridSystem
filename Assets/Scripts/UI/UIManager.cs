@@ -50,6 +50,10 @@ namespace UI {
         private int currentPopulation = 1;
 
         private void Start() {
+            //TODO KUBO
+            moneyCount.text = 999999999.ToString();
+            currentIncome = 5000;
+            incomePerPopulation = 10;
             natureButton.onClick.AddListener(() => {
                 Debug.Log("natureButton button 1 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
