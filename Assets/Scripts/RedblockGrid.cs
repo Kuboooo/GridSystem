@@ -11,8 +11,7 @@ public class RedblockGrid
         public int q_;
         public int r_;
         public int s_;
-
-        private bool[] connections = new bool[6];
+        public bool[] connections = new bool[6];
 
         public Hex(int q, int r, int s) {
             q_ = q;

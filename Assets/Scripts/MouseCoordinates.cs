@@ -77,6 +77,8 @@ public class MouseCoordinates : MonoBehaviour {
         HighlightTileOnMouseHover();
         ShowPreview();
         FindPath();
+
+        DrawConnections();
     }
 
     private void FindPath() {
@@ -201,6 +203,7 @@ public class MouseCoordinates : MonoBehaviour {
                                     newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + singleCurrentRotation) % 6);
                                 }
                                 buildHex.AddConnections(newRoads);
+                                buildHex.ConnectedHexes = hexesToBuild; // Track connected hexes
                                 hexMap.Add(buildHex, buildingInstance);
                                 buildingsMap[buildHex] = true;
                             }
@@ -259,5 +262,23 @@ public class MouseCoordinates : MonoBehaviour {
         previewInstance = null;
         currentRotation = initialRotation;
         singleCurrentRotation = singleInitialRotation;
+    }
+
+    private void DrawConnections() {
+        foreach (var kvp in hexMap) {
+            RedblockGrid.Hex hex = kvp.Key;
+            Vector3 hexPosition = new Vector3((float)RedblockGrid.HexToPixel(layout, hex).x, 0, (float)RedblockGrid.HexToPixel(layout, hex).y);
+
+            for (int i = 0; i < 6; i++) {
+                if (hex.connections[i]) {
+                    Vector3 neighbourHexPosition = new Vector3(
+                        (float)RedblockGrid.HexToPixel(layout, RedblockGrid.Hex.HexNeighbor(hex, i)).x, 
+                        0, 
+                        (float)RedblockGrid.HexToPixel(layout, RedblockGrid.Hex.HexNeighbor(hex, i)).y);
+                    Vector3 midpoint = (hexPosition + neighbourHexPosition) / 2;
+                    Debug.DrawLine(hexPosition, midpoint, Color.red);
+                }
+            }
+        }
     }
 }
