@@ -1,22 +1,20 @@
 using System;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI {
+
     public class UIManager : MonoBehaviour {
 
         public static event Action<PreviewBuildingSO> OnPreviewingBuilding;
         public static event Action<object, EventArgs> OnStopPreviewing;
 
-        private static void PreviewBuilding(PreviewBuildingSO buildingSO)
-        {
+        private static void PreviewBuilding(PreviewBuildingSO buildingSO) {
             OnPreviewingBuilding?.Invoke(buildingSO);
         }
 
-        private static void StopPreviewing()
-        {
+        private static void StopPreviewing() {
             OnStopPreviewing?.Invoke(null, EventArgs.Empty);
         }
 
@@ -25,7 +23,9 @@ namespace UI {
         [SerializeField] private Button bigBuildingButton;
         [SerializeField] private Button cancelPreview;
         [SerializeField] private TextMeshProUGUI populationCount;
+
         [SerializeField] private TextMeshProUGUI moneyCount;
+
         // TODO KUBO pull these somehow automatically out of some SOlist
         [SerializeField] private PreviewBuildingSO previewBuildingVillageSO;
         [SerializeField] private PreviewBuildingSO previewBuildingPondSO;
@@ -46,7 +46,6 @@ namespace UI {
         private float interval = 10f; // Interval in seconds
 
 
-
         private int currentPopulation = 1;
 
         private void Start() {
@@ -57,39 +56,37 @@ namespace UI {
             natureButton.onClick.AddListener(() => {
                 Debug.Log("natureButton button 1 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
-                ShowPreview(previewBuildingPondSO);
-            }
+                    ShowPreview(previewBuildingPondSO);
+                }
             });
             buildingButton.onClick.AddListener(() => {
                 Debug.Log("buildingButton button 2 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
                     ShowPreview(previewBuildingVillageSO);
-            }
+                }
             });
             bigBuildingButton.onClick.AddListener(() => {
                 Debug.Log("bigBuildingButton button 3 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPizzeriaSO.cost) {
                     ShowPreview(previewBuildingPizzeriaSO);
-            }
+                }
             });
-            
+
             hideBuildingUIButton.onClick.AddListener(() => {
                 buildingUIToHide.SetActive(!buildingUIToHide.activeInHierarchy);
             });
-            hideStatsUIButton.onClick.AddListener(() => {
-                statsUIToHide.SetActive(!statsUIToHide.activeInHierarchy);
-            });
+            hideStatsUIButton.onClick.AddListener(() => { statsUIToHide.SetActive(!statsUIToHide.activeInHierarchy); });
             hideRestaurantUIButton.onClick.AddListener(() => {
                 restaurantUIToHide.SetActive(!restaurantUIToHide.activeInHierarchy);
                 gridUIToHide.SetActive(!gridUIToHide.activeInHierarchy);
             });
-            
-            cancelPreview.onClick.AddListener ( () => {
+
+            cancelPreview.onClick.AddListener(() => {
                 Debug.Log("cancelPreview button clicked");
                 StopPreviewing();
-            } );
+            });
 
-            
+
             populationCount.text = "5";
             moneyCount.text = "50";
         }
@@ -103,24 +100,30 @@ namespace UI {
                 timeSinceLastAction = 0f;
             }
 
-            enableButtons();
+            // TODO kubo if out of range throws.. needs fixin
+            EnableButtons();
 
         }
 
-        private void enableButtons() {
+        private void EnableButtons() {
             if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
                 buildingButton.interactable = true;
-            } else {
+            }
+            else {
                 buildingButton.interactable = false;
             }
+
             if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
                 natureButton.interactable = true;
-            } else {
+            }
+            else {
                 natureButton.interactable = false;
             }
+
             if (int.Parse(moneyCount.text) >= previewBuildingPizzeriaSO.cost) {
                 bigBuildingButton.interactable = true;
-            } else {
+            }
+            else {
                 bigBuildingButton.interactable = false;
             }
         }
@@ -130,7 +133,7 @@ namespace UI {
             MouseCoordinates.OnBuildingBuilt += OnBuildingBuilt;
             RestaurantUIManager.OnToppingsSelected += OnToppingsSelected;
         }
-        
+
         private void OnDisable() {
             MouseCoordinates.OnBuildingBuilt -= OnBuildingBuilt;
             RestaurantUIManager.OnToppingsSelected -= OnToppingsSelected;
@@ -146,10 +149,11 @@ namespace UI {
 
             populationCount.text = currentPopulation.ToString();
         }
- 
+
         private void ShowPreview(PreviewBuildingSO previewBuildingSo) {
             PreviewBuilding(previewBuildingSo);
         }
 
     }
+
 }
