@@ -5,6 +5,7 @@ using UI;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static RedblockGrid;
 
 public class MouseCoordinates : MonoBehaviour {
 
@@ -24,7 +25,7 @@ public class MouseCoordinates : MonoBehaviour {
     private GameObject previous;
     private Dictionary<RedblockGrid.Hex, GameObject> hexMap;
 
-    private Dictionary<RedblockGrid.Hex, Boolean> buildingsMap = new();
+    private Dictionary<RedblockGrid.Hex, GameObject> buildingsMap = new();
 
     private RedblockGrid.Layout layout;
 
@@ -39,8 +40,10 @@ public class MouseCoordinates : MonoBehaviour {
     private int singleInitialRotation = 0; // Track the current rotation in multiples of 60 degrees
 
     [SerializeField] private GameObject previewContainer;
+    private static MouseCoordinates instance;
 
     private void OnEnable() {
+        
         UIManager.OnPreviewingBuilding += OnPreviewingBuilding;
         UIManager.OnStopPreviewing += OnStopPreviewing;
     }
@@ -48,6 +51,10 @@ public class MouseCoordinates : MonoBehaviour {
     private void OnDisable() {
         UIManager.OnPreviewingBuilding -= OnPreviewingBuilding;
         UIManager.OnStopPreviewing -= OnStopPreviewing;
+    }
+
+    private void Awake() {
+        instance = this;
     }
 
     private void OnStopPreviewing(object arg1, EventArgs arg2) {
@@ -76,9 +83,9 @@ public class MouseCoordinates : MonoBehaviour {
     void Update() {
         HighlightTileOnMouseHover();
         ShowPreview();
-        FindPath();
+        //FindPath();
 
-        DrawConnections();
+        //DrawConnections();
     }
 
     private void FindPath() {
@@ -110,7 +117,7 @@ public class MouseCoordinates : MonoBehaviour {
         if (start is not null && goal is not null) {
             GameObject hexGameObject;
 
-            Func<RedblockGrid.Hex, RedblockGrid.Hex, int, int, bool> isWalkable = (currentHex, neighbourHex, neghbourCount, neigbourEdge) => {
+            Func<RedblockGrid.Hex, RedblockGrid.Hex, bool> isWalkable = (currentHex, neighbourHex) => {
                 return true;
             };
 
@@ -203,9 +210,8 @@ public class MouseCoordinates : MonoBehaviour {
                                     newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + singleCurrentRotation) % 6);
                                 }
                                 buildHex.AddConnections(newRoads);
-                                buildHex.ConnectedHexes = hexesToBuild; // Track connected hexes
                                 hexMap.Add(buildHex, buildingInstance);
-                                buildingsMap[buildHex] = true;
+                                buildingsMap[buildHex] = buildingInstance;
                             }
 
                             previewing = false;
@@ -246,7 +252,7 @@ public class MouseCoordinates : MonoBehaviour {
         material.SetColor("_BaseColor", canBuild ? Color.green : Color.red);
     }
 
-    private GameObject GetHexFromRay(RaycastHit hit, out RedblockGrid.Hex hex) {
+    public GameObject GetHexFromRay(RaycastHit hit, out RedblockGrid.Hex hex) {
         RedblockGrid.FractionalHex fractionalHex = RedblockGrid.PixelToHex(layout, new RedblockGrid.Point(hit.point.x, hit.point.z));
         hex = RedblockGrid.HexRound(fractionalHex);
         hexMap.TryGetValue(hex, out GameObject hexObject);
@@ -280,5 +286,39 @@ public class MouseCoordinates : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public GameObject GetHexFromMapNoRay(GameObject position, out RedblockGrid.Hex hex) {
+
+        RedblockGrid.FractionalHex fractionalHex = RedblockGrid.PixelToHex(layout, new RedblockGrid.Point(position.transform.position.x, position.transform.position.z));
+        hex = RedblockGrid.HexRound(fractionalHex);
+        hexMap.TryGetValue(hex, out GameObject hexObject);
+        return hexObject;
+        //Ray ray = Camera.main.ScreenPointToRay(position.transform.position);
+        //if (Physics.Raycast(ray, out RaycastHit hit)) {
+        //    GameObject hexObject = GetHexFromRay(hit, out RedblockGrid.Hex hex);
+        //    if (hex is not null) {
+        //        return hex;
+        //    }
+        //}
+        //return null;
+    }
+
+
+
+    public Dictionary<RedblockGrid.Hex, GameObject> GetBuildingMap() {
+        return buildingsMap;
+    }
+    
+    public Dictionary<RedblockGrid.Hex, GameObject> GetMap() {
+        return hexMap;
+    }
+
+    public static MouseCoordinates GetInstance() {
+        return instance;
+    }
+
+    public RedblockGrid.Layout GetLayout() {
+        return layout;
     }
 }

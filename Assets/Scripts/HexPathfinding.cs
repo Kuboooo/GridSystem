@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class HexPathfinding {
-    public static List<RedblockGrid.Hex> FindPath(RedblockGrid.Hex start, RedblockGrid.Hex goal, Dictionary<RedblockGrid.Hex, GameObject> hexMap, Func<RedblockGrid.Hex, RedblockGrid.Hex, int, int, bool> isWalkable) {
+    public static List<RedblockGrid.Hex> FindPath(RedblockGrid.Hex start, RedblockGrid.Hex goal, Dictionary<RedblockGrid.Hex, GameObject> hexMap, Func<RedblockGrid.Hex, RedblockGrid.Hex, bool> isWalkable) {
         var openList = new PriorityQueue<RedblockGrid.Hex>();
         var cameFrom = new Dictionary<RedblockGrid.Hex, RedblockGrid.Hex>();
         var gScore = new Dictionary<RedblockGrid.Hex, float>();
@@ -26,10 +26,7 @@ public class HexPathfinding {
             var neighbors = GetNeighborsConnected(current, hexMap);
             foreach (var neighbor in GetNeighborsConnected(current, hexMap)) {
                 //TODO KUBO we dont need this now at all
-                negboursCount++;
-                negboursDirection--;
-
-                if (!isWalkable(current, neighbor, negboursCount, negboursDirection)) {
+                if (!isWalkable(current, neighbor)) {
                     continue;
                 }
                 float tentativeGScore = gScore[current] + 1;

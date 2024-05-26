@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabToPreview: {fileID: 6767105265755652916, guid: 5d70316c0bd5d8f45b34c5513aa14d59,
     type: 3}
-  prefabToBuild: {fileID: 6767105265755652916, guid: 230cdfb370d7c9640a0973f7591676fe,
+  prefabToBuild: {fileID: 6767105265755652916, guid: 07e55d6413f8c5c49b519e3401eabe9e,
     type: 3}
   basePopulationGrowth: 5
   tileSize: 1
