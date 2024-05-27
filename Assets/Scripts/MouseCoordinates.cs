@@ -193,6 +193,7 @@ public class MouseCoordinates : MonoBehaviour {
 
     private List<Hex> CalculateBuildingHexes(Hex baseHex, int rotation) {
         List<Hex> hexesToBuild = new List<Hex> { baseHex };
+        baseHex.SetPizzeria();
 
         // Rotate the direction indices based on the current rotation
         int direction1 = (3 + rotation) % 6;

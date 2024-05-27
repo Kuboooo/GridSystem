@@ -12,12 +12,17 @@ public class RedblockGrid
         public int r_;
         public int s_;
         public bool[] connections = new bool[6];
+        private bool isPizzeria;
 
         public Hex(int q, int r, int s) {
             q_ = q;
             r_ = r;
             s_ = s;
         }
+
+        public bool IsPizzeria => isPizzeria;
+        public void SetPizzeria() => isPizzeria = true;
+        
 
         public static bool operator ==(Hex a, Hex b) {
             return a.q_ == b.q_ && a.r_ == b.r_ && a.s_ == b.s_;
