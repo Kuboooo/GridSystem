@@ -4,6 +4,10 @@ using UnityEngine;
 using static RedblockGrid;
 
 public class HumanAIPathfinding : MonoBehaviour {
+    
+    [SerializeField] int maxDistance = 1;
+    [SerializeField] float waitBeforeNextAttempt = 60f;
+    
     float moveSpeed = 40f; // Speed at which the transform moves towards the next hex
     float moveTime; // Time elapsed since the last move
     private float lastAttemptTime = 0f;
@@ -24,18 +28,20 @@ public class HumanAIPathfinding : MonoBehaviour {
 
     void Update() {
         if (path is null || goalHex is null) {
-            if (Time.time - lastAttemptTime > 60f) {
+            if (Time.time - lastAttemptTime > waitBeforeNextAttempt) {
+                
+                float closestPizzeria = float.MaxValue;
                 lastAttemptTime = 0f;
                 foreach (Hex hex in mouseCoordinates.GetBuildingMap().Keys) {
-                    if (hex.IsPizzeria) {
-                        goalHex = hex;
-                        path = HexPathfinding.FindPath(startingHex, goalHex, mouseCoordinates.GetMap(),
-                            (_, _) => true);
-                        if (path?.Any() != true) {
-                            continue;
-                        }
-                        else {
-                            break;
+                    if (hex.IsPizzeria)
+                    {
+                        var potentialPath = HexPathfinding.FindPath(startingHex, hex, mouseCoordinates.GetMap(), (_, _) => true, maxDistance);
+
+                        if (potentialPath != null && potentialPath.Count < closestPizzeria)
+                        {
+                            goalHex = hex;
+                            path = potentialPath;
+                            closestPizzeria = potentialPath.Count;
                         }
                     }
                 }
@@ -75,7 +81,7 @@ public class HumanAIPathfinding : MonoBehaviour {
                     if (path.Count == 0) {
                         if (!returning) {
                             path = HexPathfinding.FindPath(goalHex, startingHex, mouseCoordinates.GetMap(),
-                                (_, _) => true);
+                                (_, _) => true, maxDistance);
 
                             if (path == null || path.Count == 0) {
                                 path = null;

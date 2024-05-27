@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 public class HexPathfinding {
-    public static List<RedblockGrid.Hex> FindPath(RedblockGrid.Hex start, RedblockGrid.Hex goal, Dictionary<RedblockGrid.Hex, GameObject> hexMap, Func<RedblockGrid.Hex, RedblockGrid.Hex, bool> isWalkable) {
+    public static List<RedblockGrid.Hex> FindPath(RedblockGrid.Hex start, RedblockGrid.Hex goal, Dictionary<RedblockGrid.Hex, GameObject> hexMap, Func<RedblockGrid.Hex, RedblockGrid.Hex, bool> isWalkable, int maxDistance) {
         var openList = new PriorityQueue<RedblockGrid.Hex>();
         var cameFrom = new Dictionary<RedblockGrid.Hex, RedblockGrid.Hex>();
         var gScore = new Dictionary<RedblockGrid.Hex, float>();
@@ -30,6 +30,10 @@ public class HexPathfinding {
                     continue;
                 }
                 float tentativeGScore = gScore[current] + 1;
+                if (tentativeGScore > maxDistance)
+                {
+                    continue;
+                }
 
                 if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor]) {
                     cameFrom[neighbor] = current;
