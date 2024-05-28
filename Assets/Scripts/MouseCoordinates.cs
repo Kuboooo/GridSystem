@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 using static RedblockGrid;
 
 public class MouseCoordinates : MonoBehaviour {
-
     public static event Action<object, PreviewBuildingSO> OnBuildingBuilt;
     public Material material;
     private Material backupMaterial;
@@ -33,9 +32,9 @@ public class MouseCoordinates : MonoBehaviour {
     [SerializeField] private GameObject previewContainer;
     private static MouseCoordinates instance;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+    private Dictionary<int, Dictionary<int, Queue<Vector3>>> waypointsForCurrentSO;
 
     private void OnEnable() {
-
         UIManager.OnPreviewingBuilding += OnPreviewingBuilding;
         UIManager.OnStopPreviewing += OnStopPreviewing;
     }
@@ -54,8 +53,10 @@ public class MouseCoordinates : MonoBehaviour {
         DestroyPreviewInstance();
     }
 
-    private void OnPreviewingBuilding(PreviewBuildingSO previewBuildingSo) {
+    private void OnPreviewingBuilding(PreviewBuildingSO previewBuildingSo,
+        Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints) {
         previewing = true;
+        waypointsForCurrentSO = waypoints;
         DestroyPreviewInstance();
         previewBuildingSO = previewBuildingSo;
         previewInstance = Instantiate(previewBuildingSo.prefabToPreview, previewContainer.transform);
@@ -92,7 +93,7 @@ public class MouseCoordinates : MonoBehaviour {
         RaycastHit hit;
         if (TryGetRaycastHit(out hit)) {
             ShowPreviewOnRaycastHit(hit, out List<Hex> hexesToBuild);
-            
+
             if (CanBuild(hexesToBuild)) {
                 UpdatePreviewColor(true);
                 HandleBuildingPlacement(hexesToBuild);
@@ -164,6 +165,32 @@ public class MouseCoordinates : MonoBehaviour {
             int[] newRoads = new int[previewBuildingSO.roads[hexNumber].roadArray.Length];
             for (int i = 0; i < newRoads.Length; i++) {
                 newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % 6);
+            }
+
+            Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints =
+                new Dictionary<int, Dictionary<int, Queue<Vector3>>>();
+            for (int i = 0; i < 6; i++) {
+                waypoints[i] = new Dictionary<int, Queue<Vector3>>();
+                for (int j = 0; j < 6; j++) {
+                    waypoints[i][j] = new Queue<Vector3>();
+                }
+            }
+
+            hex.Roads = waypoints;
+            if (waypointsForCurrentSO is not null) {
+                for (int i = 0; i < 6; i++) {
+                    if (!waypointsForCurrentSO.ContainsKey(i)) {
+                        continue;
+                    }
+
+                    for (int j = 0; j < 6; j++) {
+                        if (!waypointsForCurrentSO[i].ContainsKey(j)) {
+                            continue;
+                        }
+
+                        hex.AddRoad(i, j, waypointsForCurrentSO[i][j]);
+                    }
+                }
             }
 
             hex.AddConnections(newRoads);
@@ -269,7 +296,6 @@ public class MouseCoordinates : MonoBehaviour {
     }
 
     public GameObject GetHexFromMapNoRay(GameObject position, out Hex hex) {
-
         FractionalHex fractionalHex = PixelToHex(layout,
             new Point(position.transform.position.x, position.transform.position.z));
         hex = HexRound(fractionalHex);
@@ -292,5 +318,4 @@ public class MouseCoordinates : MonoBehaviour {
     public Layout GetLayout() {
         return layout;
     }
-
 }

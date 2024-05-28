@@ -13,13 +13,26 @@ public class RedblockGrid
         public int s_;
         public bool[] connections = new bool[6];
         private bool isPizzeria;
+        public Dictionary<int, Dictionary<int, Queue<Vector3>>> Roads; // Dictionary mapping direction to list of waypoints
 
         public Hex(int q, int r, int s) {
             q_ = q;
             r_ = r;
             s_ = s;
+
+            // Roads = new Dictionary<int, Dictionary<int, Queue<Vector3>>>(); // Initialize with no roads
+        }
+        
+        public void AddRoad(int fromDirection, int toDirection,Queue<Vector3> waypoints)
+        {
+            Roads[fromDirection][toDirection] = waypoints;
         }
 
+        public Queue<Vector3> GetRoad(int fromDirection, int toDirection)
+        {
+            return Roads.GetValueOrDefault(fromDirection)?.GetValueOrDefault(toDirection);
+        }
+        
         public bool IsPizzeria => isPizzeria;
         public void SetPizzeria() => isPizzeria = true;
         
@@ -86,13 +99,18 @@ public class RedblockGrid
             return HexAdd(hex, HexDirection(direction));
         }
 
-        public void AddConnection(int edgeDirection) {
-            if (edgeDirection < 0 || edgeDirection >= 6) {
-                throw new ArgumentOutOfRangeException(nameof(edgeDirection), "Edge direction must be between 0 and 5.");
+        public static int GetDirection(Hex startHex, Hex endHex)
+        {
+            Hex directionHex = HexSubtract(endHex,startHex);
+            for (int i = 0; i < HexDirections.Count; i++)
+            {
+                if (HexDirections[i] == directionHex)
+                {
+                    return i;
+                }
             }
-            connections[edgeDirection] = true;
+            throw new ArgumentException("Hexes are not neighbors");
         }
-        
         public void AddConnections(int[] edgeDirections) {
             for (int i = 0; i < edgeDirections.Length; i++) {
                 if (edgeDirections[i] < 0 || edgeDirections[i] >= 6) {

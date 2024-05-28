@@ -11,4 +11,5 @@ public class PreviewBuildingSO : ScriptableObject
     public int tileSize;
     public int cost;
     public List<Roads> roads;
+    public Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints;
 }

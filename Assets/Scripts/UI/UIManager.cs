@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,11 +8,11 @@ namespace UI {
 
     public class UIManager : MonoBehaviour {
 
-        public static event Action<PreviewBuildingSO> OnPreviewingBuilding;
+        public static event Action<PreviewBuildingSO, Dictionary<int, Dictionary<int, Queue<Vector3>>>> OnPreviewingBuilding;
         public static event Action<object, EventArgs> OnStopPreviewing;
 
-        private static void PreviewBuilding(PreviewBuildingSO buildingSO) {
-            OnPreviewingBuilding?.Invoke(buildingSO);
+        private static void PreviewBuilding(PreviewBuildingSO buildingSO, Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints) {
+            OnPreviewingBuilding?.Invoke(buildingSO, waypoints);
         }
 
         private static void StopPreviewing() {
@@ -56,19 +57,25 @@ namespace UI {
             natureButton.onClick.AddListener(() => {
                 Debug.Log("natureButton button 1 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
-                    ShowPreview(previewBuildingPondSO);
+                    // Vector3(-11.2962799,4.38943624,-3.75619435)
+                    ShowPreview(previewBuildingPondSO,null);
                 }
             });
             buildingButton.onClick.AddListener(() => {
                 Debug.Log("buildingButton button 2 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
-                    ShowPreview(previewBuildingVillageSO);
+                    Dictionary<int, Dictionary<int, Queue<Vector3>>> villageWaypoints = new Dictionary<int, Dictionary<int, Queue<Vector3>>>();
+                    Queue<Vector3> queue = new Queue<Vector3>();
+                    villageWaypoints[1] = new Dictionary<int, Queue<Vector3>>();
+                    queue.Enqueue(new Vector3(-11.2962799f,4.38943624f,-3.75619435f));
+                    villageWaypoints[1][5] = queue;
+                    ShowPreview(previewBuildingVillageSO, villageWaypoints);
                 }
             });
             bigBuildingButton.onClick.AddListener(() => {
                 Debug.Log("bigBuildingButton button 3 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPizzeriaSO.cost) {
-                    ShowPreview(previewBuildingPizzeriaSO);
+                    ShowPreview(previewBuildingPizzeriaSO, null);
                 }
             });
 
@@ -150,8 +157,8 @@ namespace UI {
             populationCount.text = currentPopulation.ToString();
         }
 
-        private void ShowPreview(PreviewBuildingSO previewBuildingSo) {
-            PreviewBuilding(previewBuildingSo);
+        private void ShowPreview(PreviewBuildingSO previewBuildingSo, Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints) {
+            PreviewBuilding(previewBuildingSo, waypoints);
         }
 
     }
