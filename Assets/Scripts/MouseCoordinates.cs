@@ -32,7 +32,7 @@ public class MouseCoordinates : MonoBehaviour {
     [SerializeField] private GameObject previewContainer;
     private static MouseCoordinates instance;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
-    private Dictionary<int, Dictionary<int, Queue<Vector3>>> waypointsForCurrentSO;
+    private Dictionary<int, Dictionary<int, List<Vector3>>> waypointsForCurrentSO;
 
     private void OnEnable() {
         UIManager.OnPreviewingBuilding += OnPreviewingBuilding;
@@ -54,7 +54,7 @@ public class MouseCoordinates : MonoBehaviour {
     }
 
     private void OnPreviewingBuilding(PreviewBuildingSO previewBuildingSo,
-        Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints) {
+        Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
         previewing = true;
         waypointsForCurrentSO = waypoints;
         DestroyPreviewInstance();
@@ -167,12 +167,12 @@ public class MouseCoordinates : MonoBehaviour {
                 newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % 6);
             }
 
-            Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints =
-                new Dictionary<int, Dictionary<int, Queue<Vector3>>>();
+            Dictionary<int, Dictionary<int, List<Vector3>>> waypoints =
+                new Dictionary<int, Dictionary<int, List<Vector3>>>();
             for (int i = 0; i < 6; i++) {
-                waypoints[i] = new Dictionary<int, Queue<Vector3>>();
+                waypoints[i] = new Dictionary<int, List<Vector3>>();
                 for (int j = 0; j < 6; j++) {
-                    waypoints[i][j] = new Queue<Vector3>();
+                    waypoints[i][j] = new List<Vector3>();
                 }
             }
 
@@ -206,7 +206,8 @@ public class MouseCoordinates : MonoBehaviour {
             Destroy(hexObjectPart);
             hexMap.Remove(hex);
         }
-
+        
+        hex.worldPosition = buildingInstance.transform.position;
         hexMap.Add(hex, buildingInstance);
         buildingsMap[hex] = buildingInstance;
     }

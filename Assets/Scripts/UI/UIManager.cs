@@ -8,10 +8,10 @@ namespace UI {
 
     public class UIManager : MonoBehaviour {
 
-        public static event Action<PreviewBuildingSO, Dictionary<int, Dictionary<int, Queue<Vector3>>>> OnPreviewingBuilding;
+        public static event Action<PreviewBuildingSO, Dictionary<int, Dictionary<int, List<Vector3>>>> OnPreviewingBuilding;
         public static event Action<object, EventArgs> OnStopPreviewing;
 
-        private static void PreviewBuilding(PreviewBuildingSO buildingSO, Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints) {
+        private static void PreviewBuilding(PreviewBuildingSO buildingSO, Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
             OnPreviewingBuilding?.Invoke(buildingSO, waypoints);
         }
 
@@ -64,11 +64,13 @@ namespace UI {
             buildingButton.onClick.AddListener(() => {
                 Debug.Log("buildingButton button 2 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
-                    Dictionary<int, Dictionary<int, Queue<Vector3>>> villageWaypoints = new Dictionary<int, Dictionary<int, Queue<Vector3>>>();
-                    Queue<Vector3> queue = new Queue<Vector3>();
-                    villageWaypoints[1] = new Dictionary<int, Queue<Vector3>>();
-                    queue.Enqueue(new Vector3(-11.2962799f,4.38943624f,-3.75619435f));
-                    villageWaypoints[1][5] = queue;
+                    Dictionary<int, Dictionary<int, List<Vector3>>> villageWaypoints = new Dictionary<int, Dictionary<int, List<Vector3>>>();
+                    List<Vector3> list = new List<Vector3>();
+                    villageWaypoints[1] = new Dictionary<int, List<Vector3>>();
+                    list.Add(new Vector3(2.99f,3.683f,-1.05f));
+                    list.Add(new Vector3(-0f,0f,-5f));
+                    // list.Add(new Vector3(-11.2962799f,4.38943624f,-3.75619435f));
+                    villageWaypoints[1][5] = list;
                     ShowPreview(previewBuildingVillageSO, villageWaypoints);
                 }
             });
@@ -157,7 +159,7 @@ namespace UI {
             populationCount.text = currentPopulation.ToString();
         }
 
-        private void ShowPreview(PreviewBuildingSO previewBuildingSo, Dictionary<int, Dictionary<int, Queue<Vector3>>> waypoints) {
+        private void ShowPreview(PreviewBuildingSO previewBuildingSo, Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
             PreviewBuilding(previewBuildingSo, waypoints);
         }
 

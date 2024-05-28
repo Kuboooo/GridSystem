@@ -13,22 +13,23 @@ public class RedblockGrid
         public int s_;
         public bool[] connections = new bool[6];
         private bool isPizzeria;
-        public Dictionary<int, Dictionary<int, Queue<Vector3>>> Roads; // Dictionary mapping direction to list of waypoints
+        public Vector3 worldPosition;
+        public Dictionary<int, Dictionary<int, List<Vector3>>> Roads; // Dictionary mapping direction to list of waypoints
 
         public Hex(int q, int r, int s) {
             q_ = q;
             r_ = r;
             s_ = s;
 
-            // Roads = new Dictionary<int, Dictionary<int, Queue<Vector3>>>(); // Initialize with no roads
+            // Roads = new Dictionary<int, Dictionary<int, List<Vector3>>>(); // Initialize with no roads
         }
         
-        public void AddRoad(int fromDirection, int toDirection,Queue<Vector3> waypoints)
+        public void AddRoad(int fromDirection, int toDirection,List<Vector3> waypoints)
         {
             Roads[fromDirection][toDirection] = waypoints;
         }
 
-        public Queue<Vector3> GetRoad(int fromDirection, int toDirection)
+        public List<Vector3> GetRoad(int fromDirection, int toDirection)
         {
             return Roads.GetValueOrDefault(fromDirection)?.GetValueOrDefault(toDirection);
         }

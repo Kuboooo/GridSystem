@@ -4,6 +4,7 @@ using UnityEngine;
 using static RedblockGrid;
 
 public class HumanAIPathfinding : MonoBehaviour {
+
     [SerializeField] int maxDistance = 1;
     [SerializeField] float waitBeforeNextAttempt = 60f;
 
@@ -19,6 +20,11 @@ public class HumanAIPathfinding : MonoBehaviour {
     private int startingPoint;
     private Hex previousHex;
     private Hex futureHex;
+    private Hex currentHex;
+    private List<Vector3> waypoints = new List<Vector3>();
+        
+    private int iterator = 0;
+    // private List<Vector3> waypointsHelperList;
 
     private void Start() {
         mouseCoordinates = MouseCoordinates.GetInstance();
@@ -56,13 +62,14 @@ public class HumanAIPathfinding : MonoBehaviour {
             // Check if it's time to move
             if (!(moveTime >= 1f / moveSpeed)) return;
             moveTime = 0f;
-
-            Queue<Vector3> waypoints = new Queue<Vector3>();
+            
             // Set the next target position if there isn't one
-            if (targetPosition == Vector3.zero && waypoints.Count == 0 && path.Count > 0) {
+            if (targetPosition == Vector3.zero &&  path.Count > 0 && (waypoints.Count == 0 || iterator >= waypoints.Count)) {
+                waypoints = new List<Vector3>();
                 if (startingPoint == 0) {
                     // we are at the start
                     Hex hex = path[0];
+                    currentHex = hex;
                     Point point = HexToPixel(mouseCoordinates.GetLayout(), hex);
                     targetPosition = new Vector3((float)point.x, 0f, (float)point.y);
                     previousHex = hex;
@@ -73,19 +80,26 @@ public class HumanAIPathfinding : MonoBehaviour {
                     // now we have access to the previous hex
                     // now we have access to the future hex
                     if (path.Count > 1) {
+                        iterator = 0;
                         futureHex = path[1];
                         Hex hex = path[0];
-                        // TODO KUBO pizzeria hexes is NOT connected properly!
-                        waypoints = hex.GetRoad(Hex.GetDirection(previousHex, hex),
+                        currentHex = hex;
+                        // TODO KUBO pizzeria hexes is NOT connected properly!!
+                        waypoints = hex.GetRoad(Hex.GetDirection(hex, previousHex),
                             Hex.GetDirection(hex, futureHex));
-                        if (waypoints?.Count > 0) {
-                            targetPosition = waypoints.Dequeue();
-                            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+                        if (waypoints?.Count > 0 && iterator < waypoints.Count) {
+                            targetPosition = waypoints[iterator];
+                            // iterator++;
+                            targetPosition += currentHex.worldPosition;
+                            transform.position = Vector3.MoveTowards(transform.position, targetPosition,
+                                moveSpeed * Time.deltaTime);
                         }
                         else {
+                            iterator = 0;
                             Point point = HexToPixel(mouseCoordinates.GetLayout(), hex);
                             targetPosition = new Vector3((float)point.x, 0f, (float)point.y);
                         }
+
                         path.RemoveAt(0);
                     }
                     else {
@@ -93,7 +107,8 @@ public class HumanAIPathfinding : MonoBehaviour {
                         Hex hex = path[0];
                         path.RemoveAt(0);
                         Point point = HexToPixel(mouseCoordinates.GetLayout(), hex);
-                        targetPosition = new Vector3( (float)point.x, 0f, (float)point.y);
+                        targetPosition = new Vector3((float)point.x, 0f, (float)point.y);
+                        iterator = 0;
                     }
                 }
             }
@@ -106,8 +121,14 @@ public class HumanAIPathfinding : MonoBehaviour {
             if (transform.position != targetPosition) return;
             targetPosition = Vector3.zero;
             // If there are more waypoints, set the next target position
-            if (waypoints?.Count > 0) {
-                targetPosition = waypoints.Dequeue();
+            if (waypoints?.Count > 0
+                && iterator < waypoints.Count
+                ) {
+                targetPosition = waypoints[iterator];
+                iterator++;
+                targetPosition += currentHex.worldPosition;
+                return;
+                // TODO KUBO return
             }
 
             // If the path is empty after reaching the target, check if we need to return or complete the return
@@ -123,13 +144,16 @@ public class HumanAIPathfinding : MonoBehaviour {
 
                 startingPoint = 0;
                 returning = true;
+                iterator = 0;
             }
             else {
                 startingPoint = 0;
                 path = null;
                 goalHex = null;
                 returning = false;
+                iterator = 0;
             }
         }
     }
+
 }
