@@ -5,13 +5,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI {
-
     public class UIManager : MonoBehaviour {
+        public static event Action<PreviewBuildingSO, Dictionary<int, Dictionary<int, List<Vector3>>>>
+            OnPreviewingBuilding;
 
-        public static event Action<PreviewBuildingSO, Dictionary<int, Dictionary<int, List<Vector3>>>> OnPreviewingBuilding;
         public static event Action<object, EventArgs> OnStopPreviewing;
 
-        private static void PreviewBuilding(PreviewBuildingSO buildingSO, Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
+        private static void PreviewBuilding(PreviewBuildingSO buildingSO,
+            Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
             OnPreviewingBuilding?.Invoke(buildingSO, waypoints);
         }
 
@@ -39,7 +40,7 @@ namespace UI {
         [SerializeField] private Button hideRestaurantUIButton;
         [SerializeField] private GameObject restaurantUIToHide;
         [SerializeField] private GameObject gridUIToHide;
-        private float currentIncome = 0f;
+        private float currentIncome = 500f;
         private float incomePerPopulation = 1f;
         private int pizzaValue = 1;
 
@@ -57,20 +58,91 @@ namespace UI {
             natureButton.onClick.AddListener(() => {
                 Debug.Log("natureButton button 1 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
-                    // Vector3(-11.2962799,4.38943624,-3.75619435)
-                    ShowPreview(previewBuildingPondSO,null);
+                    
+                    Dictionary<int, Dictionary<int, List<Vector3>>> pondWaypoints =
+                        new Dictionary<int, Dictionary<int, List<Vector3>>>();
+                    List<Vector3> oneThreeList = new List<Vector3>();
+                    List<Vector3> oneFiveList = new List<Vector3>();
+                    List<Vector3> threeOneList = new List<Vector3>();
+                    List<Vector3> fiveOneList = new List<Vector3>();
+                    List<Vector3> threeFiveList = new List<Vector3>();
+                    List<Vector3> fiveThreeList = new List<Vector3>();
+                    
+                    pondWaypoints[1] = new Dictionary<int, List<Vector3>>();
+                    pondWaypoints[3] = new Dictionary<int, List<Vector3>>();
+                    pondWaypoints[5] = new Dictionary<int, List<Vector3>>();
+                    
+                    pondWaypoints[1][3] = oneThreeList;
+                    pondWaypoints[3][1] = threeOneList;
+                    pondWaypoints[1][5] = oneFiveList;
+                    pondWaypoints[5][1] = fiveOneList;
+                    pondWaypoints[3][5] = threeFiveList;
+                    pondWaypoints[5][3] = fiveThreeList;
+                    
+                    threeOneList.Add(new Vector3(4.9f,0,9f));
+                    threeOneList.Add(new Vector3(1.3f,0,9.1f));
+                    threeOneList.Add(new Vector3(-4f,0,8.6f));
+                    threeOneList.Add(new Vector3(-8.6f,0,6.3f));
+                    threeOneList.Add(new Vector3(-9.4f,0,1.4f));
+                    
+                    fiveOneList.Add(new Vector3(4.9f,0,9f));
+                    fiveOneList.Add(new Vector3(7.4f,0,6.6f));
+                    fiveOneList.Add(new Vector3(8.6f,0,3.5f));
+                    fiveOneList.Add(new Vector3(9.4f,0,0f));
+                    fiveOneList.Add(new Vector3(8.4f,0,-4.5f));
+                    fiveOneList.Add(new Vector3(5.36f,0,-7.34f));
+                    
+                    oneThreeList.Add(new Vector3(-9.4f,0,1.4f));
+                    oneThreeList.Add(new Vector3(-8.6f,0,6.3f));
+                    oneThreeList.Add(new Vector3(-4f,0,8.6f));
+                    oneThreeList.Add(new Vector3(1.3f,0,9.1f));
+                    oneThreeList.Add(new Vector3(4.9f,0,9f));
+
+                    oneFiveList.Add(new Vector3(5.36f,0,-7.34f));
+                    oneFiveList.Add(new Vector3(8.4f,0,-4.5f));
+                    oneFiveList.Add(new Vector3(9.4f,0,0f));
+                    oneFiveList.Add(new Vector3(8.6f,0,3.5f));
+                    oneFiveList.Add(new Vector3(7.4f,0,6.6f));
+                    oneFiveList.Add(new Vector3(4.9f,0,9f));
+
+                    fiveThreeList.Add(new Vector3(-9.4f,0,1.4f));
+                    fiveThreeList.Add(new Vector3(-8.3f,0,-2.6f));
+                    fiveThreeList.Add(new Vector3(-5.8f,0,-6f));
+                    fiveThreeList.Add(new Vector3(-2.9f,0,-8.13f));
+                    fiveThreeList.Add(new Vector3(1.18f,0,-9.15f));
+                    fiveThreeList.Add(new Vector3(5.36f,0,-7.34f));
+
+                    threeFiveList.Add(new Vector3(5.36f,0,-7.34f));
+                    threeFiveList.Add(new Vector3(1.18f,0,-9.15f));
+                    threeFiveList.Add(new Vector3(-2.9f,0,-8.13f));
+                    threeFiveList.Add(new Vector3(-5.8f,0,-6f));
+                    threeFiveList.Add(new Vector3(-8.3f,0,-2.6f));
+                    threeFiveList.Add(new Vector3(-9.4f,0,1.4f));
+
+                    ShowPreview(previewBuildingPondSO, pondWaypoints);
                 }
             });
             buildingButton.onClick.AddListener(() => {
                 Debug.Log("buildingButton button 2 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
-                    Dictionary<int, Dictionary<int, List<Vector3>>> villageWaypoints = new Dictionary<int, Dictionary<int, List<Vector3>>>();
+                    Dictionary<int, Dictionary<int, List<Vector3>>> villageWaypoints =
+                        new Dictionary<int, Dictionary<int, List<Vector3>>>();
                     List<Vector3> list = new List<Vector3>();
                     villageWaypoints[1] = new Dictionary<int, List<Vector3>>();
-                    list.Add(new Vector3(2.99f,3.683f,-1.05f));
-                    list.Add(new Vector3(-0f,0f,-5f));
-                    // list.Add(new Vector3(-11.2962799f,4.38943624f,-3.75619435f));
+                    villageWaypoints[5] = new Dictionary<int, List<Vector3>>();
+                    list.Add(new Vector3(4.7f,0,-10.5f));
+                    list.Add(new Vector3(3.6f,0,-6.66f));
+                    list.Add(new Vector3(3.74f,0,-1.65f));
+                    list.Add(new Vector3(4.87f,0,3.72f));
+                    List<Vector3> fiveList = new List<Vector3>();
+                    
+                    fiveList.Add(new Vector3(4.7f,0,10.3f));
+                    fiveList.Add(new Vector3(4f,0,4.8f));
+                    fiveList.Add(new Vector3(4.6f,0,-4.63f));
+                    fiveList.Add(new Vector3(5.76f,0,-8.5f));
+                    
                     villageWaypoints[1][5] = list;
+                    villageWaypoints[5][1] = fiveList;
                     ShowPreview(previewBuildingVillageSO, villageWaypoints);
                 }
             });
@@ -96,14 +168,20 @@ namespace UI {
             });
 
 
-            populationCount.text = "5";
-            moneyCount.text = "50";
+            // populationCount.text = "5";
+            // moneyCount.text = "50";
         }
 
         private void Update() {
             timeSinceLastAction += Time.deltaTime;
             if (timeSinceLastAction >= interval) {
                 currentIncome = currentPopulation * incomePerPopulation * pizzaValue;
+                // TODO KUBO REMOVE
+                if (currentIncome + int.Parse(moneyCount.text) > 9999999) {
+                    incomePerPopulation = 1;
+                    currentIncome = 1000;
+                    moneyCount.text = 5000.ToString();
+                }
 
                 moneyCount.text = (currentIncome + int.Parse(moneyCount.text)).ToString();
                 timeSinceLastAction = 0f;
@@ -111,7 +189,6 @@ namespace UI {
 
             // TODO kubo if out of range throws.. needs fixin
             EnableButtons();
-
         }
 
         private void EnableButtons() {
@@ -138,7 +215,6 @@ namespace UI {
         }
 
         private void OnEnable() {
-
             MouseCoordinates.OnBuildingBuilt += OnBuildingBuilt;
             RestaurantUIManager.OnToppingsSelected += OnToppingsSelected;
         }
@@ -159,10 +235,9 @@ namespace UI {
             populationCount.text = currentPopulation.ToString();
         }
 
-        private void ShowPreview(PreviewBuildingSO previewBuildingSo, Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
+        private void ShowPreview(PreviewBuildingSO previewBuildingSo,
+            Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
             PreviewBuilding(previewBuildingSo, waypoints);
         }
-
     }
-
 }

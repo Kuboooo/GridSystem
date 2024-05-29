@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +22,67 @@ public class RedblockGrid
 
             // Roads = new Dictionary<int, Dictionary<int, List<Vector3>>>(); // Initialize with no roads
         }
+
+        // public void SetRoads(Dictionary<int, Dictionary<int, List<Vector3>>> roads, int rotation) {
+        //     if (roads is null) return;
+        //     for (int i = 0; i < 6; i++) {
+        //         if (!roads.ContainsKey(i)) continue;
+        //         for (int j = 0; j < 6; j++) {
+        //             if (!roads[i].ContainsKey(j)) continue;
+        //             foreach (Vector3 road in roads[i][j]) {
+        //                 Vector3 rotateVector = RotateVectorAroundAxis(road, worldPosition, rotation * 60);
+        //                 Roads[(i + rotation) % 6][(j + rotation) % 6].Add(rotateVector);
+        //             }
+        //         }
+        //     }
+        // }
+        // Vector3 RotateVectorAroundAxis(Vector3 vector, Vector3 axis, float angle)
+        // {
+        //     // Create a quaternion representing the rotation
+        //     Quaternion rotation = Quaternion.AngleAxis(angle, axis);
+        //
+        //     // Rotate the vector using the quaternion
+        //     Vector3 rotatedVector = rotation * vector;
+        //     rotatedVector.y = 0;
+        //     rotatedVector.x = MathF.Round(rotatedVector.x, 2);
+        //     rotatedVector.z = MathF.Round(rotatedVector.z, 2);
+        //     return rotatedVector;
+        // }
+        
+        public void SetRoads(Dictionary<int, Dictionary<int, List<Vector3>>> roads, int rotation)
+        {
+            if (roads is null) return;
+
+            for (int i = 0; i < 6; i++)
+            {
+                if (!roads.ContainsKey(i)) continue;
+
+                for (int j = 0; j < 6; j++)
+                {
+                    if (!roads[i].ContainsKey(j)) continue;
+
+                    foreach (Vector3 road in roads[i][j])
+                    {
+                        Vector3 rotatedVector = RotateVectorAroundPoint(road, rotation * 60);
+                        Roads[(i + rotation) % 6][(j + rotation) % 6].Add(rotatedVector);
+                    }
+                }
+            }
+        }
+
+        Vector3 RotateVectorAroundPoint(Vector3 vector, float angle)
+        {
+            Quaternion rotation = Quaternion.Euler(0, angle, 0);
+            Vector3 rotatedVector = rotation * vector;
+
+            // Round off the rotated vector to ensure precision
+            rotatedVector.y = 0;
+            rotatedVector.x = Mathf.Round(rotatedVector.x * 100f) / 100f;
+            rotatedVector.z = Mathf.Round(rotatedVector.z * 100f) / 100f;
+
+            return rotatedVector;
+        }
+
         
         public void AddRoad(int fromDirection, int toDirection,List<Vector3> waypoints)
         {
@@ -80,10 +140,14 @@ public class RedblockGrid
         {
             return HexLength(HexSubtract(a, b));
         }
-        public static readonly List<Hex> HexDirections = new List<Hex>
-        {
-            new Hex(1, 0, -1), new Hex(1, -1, 0), new Hex(0, -1, 1),
-            new Hex(-1, 0, 1), new Hex(-1, 1, 0), new Hex(0, 1, -1)
+
+        public static readonly List<Hex> HexDirections = new List<Hex> {
+            new Hex(1, 0, -1),
+            new Hex(0, 1, -1),
+            new Hex(-1, 1, 0),
+            new Hex(-1, 0, 1),
+            new Hex(0, -1, 1),
+            new Hex(1, -1, 0),
         };
 
         public static Hex HexDirection(int direction)
@@ -102,7 +166,10 @@ public class RedblockGrid
 
         public static int GetDirection(Hex startHex, Hex endHex)
         {
-            Hex directionHex = HexSubtract(endHex,startHex);
+            Debug.Log("startHex q: " + startHex.q_ + " r: " + startHex.r_ + " s: " + startHex.s_);
+            Debug.Log("endHex q: " + endHex.q_ + " r: " + endHex.r_ + " s: " + endHex.s_);
+            Hex directionHex = HexSubtract(startHex,endHex);
+            Debug.Log("directionHex q: " + directionHex.q_ + " r: " + directionHex.r_ + " s: " + directionHex.s_);
             for (int i = 0; i < HexDirections.Count; i++)
             {
                 if (HexDirections[i] == directionHex)

@@ -177,21 +177,22 @@ public class MouseCoordinates : MonoBehaviour {
             }
 
             hex.Roads = waypoints;
-            if (waypointsForCurrentSO is not null) {
-                for (int i = 0; i < 6; i++) {
-                    if (!waypointsForCurrentSO.ContainsKey(i)) {
-                        continue;
-                    }
-
-                    for (int j = 0; j < 6; j++) {
-                        if (!waypointsForCurrentSO[i].ContainsKey(j)) {
-                            continue;
-                        }
-
-                        hex.AddRoad(i, j, waypointsForCurrentSO[i][j]);
-                    }
-                }
-            }
+            hex.SetRoads(waypointsForCurrentSO, currentRotation);
+            // if (waypointsForCurrentSO is not null) {
+            //     for (int i = 0; i < 6; i++) {
+            //         if (!waypointsForCurrentSO.ContainsKey(i)) {
+            //             continue;
+            //         }
+            //
+            //         for (int j = 0; j < 6; j++) {
+            //             if (!waypointsForCurrentSO[i].ContainsKey(j)) {
+            //                 continue;
+            //             }
+            //
+            //             hex.AddRoad(i, j, waypointsForCurrentSO[i][j]);
+            //         }
+            //     }
+            // }
 
             hex.AddConnections(newRoads);
 
@@ -224,8 +225,8 @@ public class MouseCoordinates : MonoBehaviour {
         baseHex.SetPizzeria();
 
         // Rotate the direction indices based on the current rotation
-        int direction1 = (3 + rotation) % 6;
-        int direction2 = (4 + rotation) % 6;
+        int direction1 = (Math.Abs( 2 - rotation)) % 6;
+        int direction2 = (3 + rotation) % 6;
 
         hexesToBuild.Add(Hex.HexNeighbor(baseHex, direction1)); // First neighbor based on rotation
         hexesToBuild.Add(Hex.HexNeighbor(baseHex, direction2)); // Second neighbor based on rotation
@@ -289,6 +290,7 @@ public class MouseCoordinates : MonoBehaviour {
         if (Physics.Raycast(ray, out RaycastHit hit)) {
             GameObject hexObject = GetHexFromRay(hit, out Hex hex);
             hexHighlighter.HighlightHex(hexObject);
+            Debug.Log("HighlightedHex q: " + hex.q_ + " r: " + hex.r_ + " s: " + hex.s_);
         }
     }
 

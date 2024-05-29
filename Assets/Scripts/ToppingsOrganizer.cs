@@ -126,6 +126,7 @@ public class ToppingsOrganizer {
         };
 
     public static int GetCombinationValue(string topping1, string topping2) {
+        // TODO KUBO CHECK NULLS if onnly 1 selected 
         if (ToppingCombinations.ContainsKey(topping1) && ToppingCombinations[topping1].ContainsKey(topping2)) {
             return ToppingCombinations[topping1][topping2];
         }
