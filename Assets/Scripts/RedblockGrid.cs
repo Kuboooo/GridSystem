@@ -63,7 +63,7 @@ public class RedblockGrid
 
                     foreach (Vector3 road in roads[i][j])
                     {
-                        Vector3 rotatedVector = RotateVectorAroundPoint(road, rotation * 60);
+                        Vector3 rotatedVector = RotateVectorAroundPoint(road, rotation * -60);
                         Roads[(i + rotation) % 6][(j + rotation) % 6].Add(rotatedVector);
                     }
                 }
@@ -142,12 +142,12 @@ public class RedblockGrid
         }
 
         public static readonly List<Hex> HexDirections = new List<Hex> {
-            new Hex(1, 0, -1),
-            new Hex(0, 1, -1),
-            new Hex(-1, 1, 0),
-            new Hex(-1, 0, 1),
-            new Hex(0, -1, 1),
-            new Hex(1, -1, 0),
+            new Hex(-1, 0, +1), 
+            new Hex(0, -1, +1), 
+            new Hex(+1, -1, 0),
+            new Hex(+1, 0, -1), 
+            new Hex(0, +1, -1), 
+            new Hex(-1, +1, 0), 
         };
 
         public static Hex HexDirection(int direction)
@@ -174,6 +174,7 @@ public class RedblockGrid
             {
                 if (HexDirections[i] == directionHex)
                 {
+                    Debug.Log("Returning direction: " + i);
                     return i;
                 }
             }

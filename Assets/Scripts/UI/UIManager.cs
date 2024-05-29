@@ -68,16 +68,16 @@ namespace UI {
                     List<Vector3> threeFiveList = new List<Vector3>();
                     List<Vector3> fiveThreeList = new List<Vector3>();
                     
-                    pondWaypoints[1] = new Dictionary<int, List<Vector3>>();
-                    pondWaypoints[3] = new Dictionary<int, List<Vector3>>();
-                    pondWaypoints[5] = new Dictionary<int, List<Vector3>>();
+                    pondWaypoints[0] = new Dictionary<int, List<Vector3>>();
+                    pondWaypoints[2] = new Dictionary<int, List<Vector3>>();
+                    pondWaypoints[4] = new Dictionary<int, List<Vector3>>();
                     
-                    pondWaypoints[1][3] = oneThreeList;
-                    pondWaypoints[3][1] = threeOneList;
-                    pondWaypoints[1][5] = oneFiveList;
-                    pondWaypoints[5][1] = fiveOneList;
-                    pondWaypoints[3][5] = threeFiveList;
-                    pondWaypoints[5][3] = fiveThreeList;
+                    pondWaypoints[0][4] = oneThreeList;
+                    pondWaypoints[4][0] = threeOneList;
+                    pondWaypoints[2][4] = oneFiveList;
+                    pondWaypoints[4][2] = fiveOneList;
+                    pondWaypoints[2][0] = threeFiveList;
+                    pondWaypoints[0][2] = fiveThreeList;
                     
                     threeOneList.Add(new Vector3(4.9f,0,9f));
                     threeOneList.Add(new Vector3(1.3f,0,9.1f));
@@ -128,8 +128,8 @@ namespace UI {
                     Dictionary<int, Dictionary<int, List<Vector3>>> villageWaypoints =
                         new Dictionary<int, Dictionary<int, List<Vector3>>>();
                     List<Vector3> list = new List<Vector3>();
-                    villageWaypoints[1] = new Dictionary<int, List<Vector3>>();
-                    villageWaypoints[5] = new Dictionary<int, List<Vector3>>();
+                    villageWaypoints[2] = new Dictionary<int, List<Vector3>>();
+                    villageWaypoints[4] = new Dictionary<int, List<Vector3>>();
                     list.Add(new Vector3(4.7f,0,-10.5f));
                     list.Add(new Vector3(3.6f,0,-6.66f));
                     list.Add(new Vector3(3.74f,0,-1.65f));
@@ -141,8 +141,8 @@ namespace UI {
                     fiveList.Add(new Vector3(4.6f,0,-4.63f));
                     fiveList.Add(new Vector3(5.76f,0,-8.5f));
                     
-                    villageWaypoints[1][5] = list;
-                    villageWaypoints[5][1] = fiveList;
+                    villageWaypoints[2][4] = list;
+                    villageWaypoints[4][2] = fiveList;
                     ShowPreview(previewBuildingVillageSO, villageWaypoints);
                 }
             });

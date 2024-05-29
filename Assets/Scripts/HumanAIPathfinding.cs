@@ -269,7 +269,7 @@ public class HumanAIPathfinding : MonoBehaviour {
                 Hex hex = path[0];
                 currentHex = hex;
                 // Debug.Log("Directions previous: " + Hex.GetDirection(hex, previousHex) + "  future: " + Hex.GetDirection(hex, futureHex));
-                waypoints = hex.GetRoad(Hex.GetDirection(previousHex, hex), Hex.GetDirection(hex, futureHex));
+                waypoints = hex.GetRoad(Hex.GetDirection(previousHex, hex), Hex.GetDirection( futureHex, hex));
                 Debug.Log("Waypoints: " + waypoints.Count + "  currentWaypointIndex: " + currentWaypointIndex );
                 foreach (var wp in waypoints) {
                     Debug.Log("Waypoint: " + wp);

@@ -20,4 +20,4 @@ MonoBehaviour:
   tileSize: 1
   cost: 500
   roads:
-  - roadArray: 0100000005000000
+  - roadArray: 0200000004000000

@@ -119,7 +119,8 @@ public class MouseCoordinates : MonoBehaviour {
 
     private void RotatePreviewInstance() {
         previewInstance.transform.rotation *= Quaternion.Euler(0, 60, 0);
-        currentRotation = (currentRotation + 1) % 6;
+        // currentRotation = (currentRotation + 1) % 6;
+        currentRotation = ((currentRotation - 1) + 6) % 6;
     }
 
     private bool TryGetRaycastHit(out RaycastHit hit) {
@@ -166,7 +167,7 @@ public class MouseCoordinates : MonoBehaviour {
             for (int i = 0; i < newRoads.Length; i++) {
                 newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % 6);
             }
-
+            
             Dictionary<int, Dictionary<int, List<Vector3>>> waypoints =
                 new Dictionary<int, Dictionary<int, List<Vector3>>>();
             for (int i = 0; i < 6; i++) {
@@ -175,7 +176,7 @@ public class MouseCoordinates : MonoBehaviour {
                     waypoints[i][j] = new List<Vector3>();
                 }
             }
-
+            
             hex.Roads = waypoints;
             hex.SetRoads(waypointsForCurrentSO, currentRotation);
             // if (waypointsForCurrentSO is not null) {
@@ -188,6 +189,11 @@ public class MouseCoordinates : MonoBehaviour {
             //             if (!waypointsForCurrentSO[i].ContainsKey(j)) {
             //                 continue;
             //             }
+            //
+            //             hex.AddRoad(i, j, waypointsForCurrentSO[i][j]);
+            //         }
+            //     }
+            // }
             //
             //             hex.AddRoad(i, j, waypointsForCurrentSO[i][j]);
             //         }
@@ -225,8 +231,10 @@ public class MouseCoordinates : MonoBehaviour {
         baseHex.SetPizzeria();
 
         // Rotate the direction indices based on the current rotation
-        int direction1 = (Math.Abs( 2 - rotation)) % 6;
-        int direction2 = (3 + rotation) % 6;
+        // int direction1 = (0 - rotation + 6) % 6;
+        // int direction2 = (5 - rotation + 6) % 6;
+        int direction1 = (0 + rotation) % 6;
+        int direction2 = (5 + rotation) % 6;
 
         hexesToBuild.Add(Hex.HexNeighbor(baseHex, direction1)); // First neighbor based on rotation
         hexesToBuild.Add(Hex.HexNeighbor(baseHex, direction2)); // Second neighbor based on rotation
