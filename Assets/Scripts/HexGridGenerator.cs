@@ -41,6 +41,7 @@ public class HexGridGenerator : MonoBehaviour {
     }
 
     void CreateHex(RedblockGrid.Hex hex) {
+        if (hexMap.ContainsKey(hex)) return;
         RedblockGrid.Point pos = RedblockGrid.HexToPixel(layout, hex);
         Vector3 position = new Vector3((float)pos.x, 0, (float)pos.y);
         GameObject instantiate = Instantiate(hexPrefab, position, Quaternion.identity, transform);
@@ -53,5 +54,49 @@ public class HexGridGenerator : MonoBehaviour {
 
     public Dictionary<RedblockGrid.Hex, GameObject> GetHexMap() {
         return hexMap;
+    }
+
+    void Update() {
+        if (Input.GetMouseButtonDown(0)) {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            // TODO KUBO we now need to restrict the building to the grid only, because it can build upon already built building 
+                // if pointers is far enough 
+            if (Physics.Raycast(ray, out hit)) {
+                Vector3 clickPosition = hit.point;
+                TryExpandGridAtPosition(clickPosition);
+            }
+        }
+    }
+
+    void TryExpandGridAtPosition(Vector3 position) {
+        RedblockGrid.Point point = new RedblockGrid.Point(position.x, position.z);
+        RedblockGrid.FractionalHex fractionalHex = RedblockGrid.PixelToHex(layout, point);
+        RedblockGrid.Hex clickedHex = RedblockGrid.HexRound(fractionalHex);
+        RedblockGrid.Hex nearestHex = GetNearestExistingHex(clickedHex);
+
+        if (nearestHex is not null && !hexMap.ContainsKey(clickedHex)) {
+            CreateHex(clickedHex);
+        }
+    }
+
+    RedblockGrid.Hex GetNearestExistingHex(RedblockGrid.Hex hex) {
+        RedblockGrid.Hex[] neighbors = {
+            
+            new(hex.q_ + 1, hex.r_, hex.s_ - 1),
+            new(hex.q_ - 1, hex.r_, hex.s_ + 1),
+            
+            new(hex.q_, hex.r_ + 1, hex.s_ - 1),
+            new(hex.q_, hex.r_ - 1, hex.s_ + 1),
+            new(hex.q_ + 1, hex.r_ - 1, hex.s_),
+            new(hex.q_ - 1, hex.r_ + 1, hex.s_)
+        };
+
+        foreach (var neighbor in neighbors) {
+            if (hexMap.ContainsKey(neighbor)) {
+                return neighbor;
+            }
+        }
+        return null;
     }
 }
