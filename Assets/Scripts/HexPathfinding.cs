@@ -21,11 +21,8 @@ public class HexPathfinding {
             if (current == goal) {
                 return ReconstructPath(cameFrom, current);
             }
-            int negboursCount = -1;
-            int negboursDirection = 6;
             var neighbors = GetNeighborsConnected(current, hexMap);
             foreach (var neighbor in GetNeighborsConnected(current, hexMap)) {
-                //TODO KUBO we dont need this now at all
                 if (!isWalkable(current, neighbor)) {
                     continue;
                 }

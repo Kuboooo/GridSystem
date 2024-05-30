@@ -20,35 +20,8 @@ public class RedblockGrid
             r_ = r;
             s_ = s;
 
-            // Roads = new Dictionary<int, Dictionary<int, List<Vector3>>>(); // Initialize with no roads
         }
 
-        // public void SetRoads(Dictionary<int, Dictionary<int, List<Vector3>>> roads, int rotation) {
-        //     if (roads is null) return;
-        //     for (int i = 0; i < 6; i++) {
-        //         if (!roads.ContainsKey(i)) continue;
-        //         for (int j = 0; j < 6; j++) {
-        //             if (!roads[i].ContainsKey(j)) continue;
-        //             foreach (Vector3 road in roads[i][j]) {
-        //                 Vector3 rotateVector = RotateVectorAroundAxis(road, worldPosition, rotation * 60);
-        //                 Roads[(i + rotation) % 6][(j + rotation) % 6].Add(rotateVector);
-        //             }
-        //         }
-        //     }
-        // }
-        // Vector3 RotateVectorAroundAxis(Vector3 vector, Vector3 axis, float angle)
-        // {
-        //     // Create a quaternion representing the rotation
-        //     Quaternion rotation = Quaternion.AngleAxis(angle, axis);
-        //
-        //     // Rotate the vector using the quaternion
-        //     Vector3 rotatedVector = rotation * vector;
-        //     rotatedVector.y = 0;
-        //     rotatedVector.x = MathF.Round(rotatedVector.x, 2);
-        //     rotatedVector.z = MathF.Round(rotatedVector.z, 2);
-        //     return rotatedVector;
-        // }
-        
         public void SetRoads(Dictionary<int, Dictionary<int, List<Vector3>>> roads, int rotation)
         {
             if (roads is null) return;

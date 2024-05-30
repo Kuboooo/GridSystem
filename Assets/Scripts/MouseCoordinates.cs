@@ -179,27 +179,6 @@ public class MouseCoordinates : MonoBehaviour {
             
             hex.Roads = waypoints;
             hex.SetRoads(waypointsForCurrentSO, currentRotation);
-            // if (waypointsForCurrentSO is not null) {
-            //     for (int i = 0; i < 6; i++) {
-            //         if (!waypointsForCurrentSO.ContainsKey(i)) {
-            //             continue;
-            //         }
-            //
-            //         for (int j = 0; j < 6; j++) {
-            //             if (!waypointsForCurrentSO[i].ContainsKey(j)) {
-            //                 continue;
-            //             }
-            //
-            //             hex.AddRoad(i, j, waypointsForCurrentSO[i][j]);
-            //         }
-            //     }
-            // }
-            //
-            //             hex.AddRoad(i, j, waypointsForCurrentSO[i][j]);
-            //         }
-            //     }
-            // }
-
             hex.AddConnections(newRoads);
 
             hexNumber++;
@@ -231,8 +210,6 @@ public class MouseCoordinates : MonoBehaviour {
         baseHex.SetPizzeria();
 
         // Rotate the direction indices based on the current rotation
-        // int direction1 = (0 - rotation + 6) % 6;
-        // int direction2 = (5 - rotation + 6) % 6;
         int direction1 = (0 + rotation) % 6;
         int direction2 = (5 + rotation) % 6;
 
@@ -298,7 +275,6 @@ public class MouseCoordinates : MonoBehaviour {
         if (Physics.Raycast(ray, out RaycastHit hit)) {
             GameObject hexObject = GetHexFromRay(hit, out Hex hex);
             hexHighlighter.HighlightHex(hexObject);
-            Debug.Log("HighlightedHex q: " + hex.q_ + " r: " + hex.r_ + " s: " + hex.s_);
         }
     }
 
