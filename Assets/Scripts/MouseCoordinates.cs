@@ -350,6 +350,8 @@ public class MouseCoordinates : MonoBehaviour {
             foreach (var hexEntry in hexMap.Keys) {
                 hexEntry.Save(writer);
             }
+
+            UIManager.instance.SaveStats(writer);
         }
     }
 
@@ -418,6 +420,8 @@ public class MouseCoordinates : MonoBehaviour {
 
                 hexMap.Add(hex, buildingInstance);
             }
+
+            UIManager.instance.LoadStats(reader);
         }
     }
 

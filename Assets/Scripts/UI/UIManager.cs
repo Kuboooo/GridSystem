@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using SOs;
 using TMPro;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace UI {
 
     public class UIManager : MonoBehaviour {
 
+        public static UIManager instance;
         public static event Action<PreviewBuildingSO> OnPreviewingBuilding;
 
         public static event Action<object, EventArgs> OnStopPreviewing;
@@ -38,8 +40,8 @@ namespace UI {
         [SerializeField] private Button buildingButton;
         [SerializeField] private Button bigBuildingButton;
         [SerializeField] private Button cancelPreview;
+        
         [SerializeField] private TextMeshProUGUI populationCount;
-
         [SerializeField] private TextMeshProUGUI moneyCount;
 
         // TODO KUBO pull these somehow automatically out of some SOlist
@@ -63,6 +65,11 @@ namespace UI {
 
 
         private int currentPopulation = 1;
+
+        
+        private void Awake() {
+            instance = this;
+        }
 
         private void Start() {
 
@@ -194,6 +201,31 @@ namespace UI {
             PreviewBuilding(previewBuildingSo);
         }
 
+        public void SaveStats(BinaryWriter writer) {
+            writer.Write(int.Parse(moneyCount.text));
+            writer.Write(currentIncome);
+            writer.Write(currentPopulation);
+            writer.Write(incomePerPopulation);
+            writer.Write(pizzaValue);
+
+            writer.Write(int.Parse(populationCount.text));
+
+            writer.Write(timeSinceLastAction);
+            writer.Write(interval);
+        }
+
+        public void LoadStats(BinaryReader reader) {
+            moneyCount.text = reader.ReadInt32().ToString();
+            currentIncome = reader.ReadInt32();
+            currentPopulation = reader.ReadInt32();
+            incomePerPopulation = reader.ReadInt32();
+            pizzaValue = reader.ReadInt32();
+
+            populationCount.text = reader.ReadInt32().ToString();
+
+            timeSinceLastAction = reader.ReadSingle();
+            interval = reader.ReadSingle();
+        }
     }
 
 }
