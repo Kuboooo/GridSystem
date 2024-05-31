@@ -109,7 +109,9 @@ public class HumanAIPathfinding : MonoBehaviour {
                 futureHex = path[1];
                 Hex hex = path[0];
                 currentHex = hex;
-                waypoints = hex.GetRoad(Hex.GetDirection(previousHex, hex), Hex.GetDirection(futureHex, hex));
+                int directionFrom = Hex.GetDirection(previousHex, hex);
+                int directionTo = Hex.GetDirection(futureHex, hex);
+                waypoints = hex.GetRoad(directionFrom, directionTo);
                 Debug.Log("Waypoints: " + waypoints.Count + "  currentWaypointIndex: " + currentWaypointIndex);
                 foreach (var wp in waypoints) {
                     Debug.Log("Waypoint: " + wp);

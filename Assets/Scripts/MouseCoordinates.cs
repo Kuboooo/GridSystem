@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 using static RedblockGrid;
 
 public class MouseCoordinates : MonoBehaviour {
+
+    private const string HEXOBJECT_LAYER = "HexObject";
     public static event Action<object, PreviewBuildingSO> OnBuildingBuilt;
     public Material material;
     private Material backupMaterial;
@@ -32,7 +34,7 @@ public class MouseCoordinates : MonoBehaviour {
     [SerializeField] private GameObject previewContainer;
     private static MouseCoordinates instance;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
-    private Dictionary<int, Dictionary<int, List<Vector3>>> waypointsForCurrentSO;
+    private List<Dictionary<int, Dictionary<int, List<Vector3>>>> waypointsForCurrentSO;
 
     private void OnEnable() {
         UIManager.OnPreviewingBuilding += OnPreviewingBuilding;
@@ -53,10 +55,9 @@ public class MouseCoordinates : MonoBehaviour {
         DestroyPreviewInstance();
     }
 
-    private void OnPreviewingBuilding(PreviewBuildingSO previewBuildingSo,
-        Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
+    private void OnPreviewingBuilding(PreviewBuildingSO previewBuildingSo) {
         previewing = true;
-        waypointsForCurrentSO = waypoints;
+        waypointsForCurrentSO = previewBuildingSo.waypoints;
         DestroyPreviewInstance();
         previewBuildingSO = previewBuildingSo;
         previewInstance = Instantiate(previewBuildingSo.prefabToPreview, previewContainer.transform);
@@ -93,7 +94,6 @@ public class MouseCoordinates : MonoBehaviour {
         RaycastHit hit;
         if (TryGetRaycastHit(out hit)) {
             ShowPreviewOnRaycastHit(hit, out List<Hex> hexesToBuild);
-
             if (CanBuild(hexesToBuild)) {
                 UpdatePreviewColor(true);
                 HandleBuildingPlacement(hexesToBuild);
@@ -101,6 +101,9 @@ public class MouseCoordinates : MonoBehaviour {
             else {
                 UpdatePreviewColor(false);
             }
+        }
+        else {
+            UpdatePreviewColor(false);
         }
     }
 
@@ -126,7 +129,9 @@ public class MouseCoordinates : MonoBehaviour {
     private bool TryGetRaycastHit(out RaycastHit hit) {
         Vector3 mousePos = Input.mousePosition;
         Ray ray = mainCamera.ScreenPointToRay(mousePos);
-        return Physics.Raycast(ray, out hit);
+
+        LayerMask layerMask = LayerMask.GetMask(HEXOBJECT_LAYER);
+        return Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask);
     }
 
     private void ShowPreviewOnRaycastHit(RaycastHit hit, out List<Hex> hexesToBuild) {
@@ -167,7 +172,7 @@ public class MouseCoordinates : MonoBehaviour {
             for (int i = 0; i < newRoads.Length; i++) {
                 newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % 6);
             }
-            
+
             Dictionary<int, Dictionary<int, List<Vector3>>> waypoints =
                 new Dictionary<int, Dictionary<int, List<Vector3>>>();
             for (int i = 0; i < 6; i++) {
@@ -176,9 +181,9 @@ public class MouseCoordinates : MonoBehaviour {
                     waypoints[i][j] = new List<Vector3>();
                 }
             }
-            
+
             hex.Roads = waypoints;
-            hex.SetRoads(waypointsForCurrentSO, currentRotation);
+            hex.SetRoads(waypointsForCurrentSO[hexNumber], currentRotation);
             hex.AddConnections(newRoads);
 
             hexNumber++;
@@ -192,7 +197,7 @@ public class MouseCoordinates : MonoBehaviour {
             Destroy(hexObjectPart);
             hexMap.Remove(hex);
         }
-        
+
         hex.worldPosition = buildingInstance.transform.position;
         hexMap.Add(hex, buildingInstance);
         buildingsMap[hex] = buildingInstance;

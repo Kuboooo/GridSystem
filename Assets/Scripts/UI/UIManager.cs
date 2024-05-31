@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SOs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,9 +12,8 @@ namespace UI {
 
         public static event Action<object, EventArgs> OnStopPreviewing;
 
-        private static void PreviewBuilding(PreviewBuildingSO buildingSO,
-            Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
-            OnPreviewingBuilding?.Invoke(buildingSO, waypoints);
+        private static void PreviewBuilding(PreviewBuildingSO buildingSO) {
+            OnPreviewingBuilding?.Invoke(buildingSO);
         }
 
         private static void StopPreviewing() {
@@ -51,6 +51,11 @@ namespace UI {
         private int currentPopulation = 1;
 
         private void Start() {
+
+            previewBuildingVillageSO.InitializeWaypoints();
+            previewBuildingPondSO.InitializeWaypoints();
+            previewBuildingPizzeriaSO.InitializeWaypoints();
+
             //TODO KUBO
             moneyCount.text = 999999999.ToString();
             currentIncome = 5000;
@@ -58,98 +63,21 @@ namespace UI {
             natureButton.onClick.AddListener(() => {
                 Debug.Log("natureButton button 1 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
-                    
-                    Dictionary<int, Dictionary<int, List<Vector3>>> pondWaypoints =
-                        new Dictionary<int, Dictionary<int, List<Vector3>>>();
-                    List<Vector3> oneThreeList = new List<Vector3>();
-                    List<Vector3> oneFiveList = new List<Vector3>();
-                    List<Vector3> threeOneList = new List<Vector3>();
-                    List<Vector3> fiveOneList = new List<Vector3>();
-                    List<Vector3> threeFiveList = new List<Vector3>();
-                    List<Vector3> fiveThreeList = new List<Vector3>();
-                    
-                    pondWaypoints[0] = new Dictionary<int, List<Vector3>>();
-                    pondWaypoints[2] = new Dictionary<int, List<Vector3>>();
-                    pondWaypoints[4] = new Dictionary<int, List<Vector3>>();
-                    
-                    pondWaypoints[0][4] = oneThreeList;
-                    pondWaypoints[4][0] = threeOneList;
-                    pondWaypoints[2][4] = oneFiveList;
-                    pondWaypoints[4][2] = fiveOneList;
-                    pondWaypoints[2][0] = threeFiveList;
-                    pondWaypoints[0][2] = fiveThreeList;
-                    
-                    threeOneList.Add(new Vector3(4.9f,0,9f));
-                    threeOneList.Add(new Vector3(1.3f,0,9.1f));
-                    threeOneList.Add(new Vector3(-4f,0,8.6f));
-                    threeOneList.Add(new Vector3(-8.6f,0,6.3f));
-                    threeOneList.Add(new Vector3(-9.4f,0,1.4f));
-                    
-                    fiveOneList.Add(new Vector3(4.9f,0,9f));
-                    fiveOneList.Add(new Vector3(7.4f,0,6.6f));
-                    fiveOneList.Add(new Vector3(8.6f,0,3.5f));
-                    fiveOneList.Add(new Vector3(9.4f,0,0f));
-                    fiveOneList.Add(new Vector3(8.4f,0,-4.5f));
-                    fiveOneList.Add(new Vector3(5.36f,0,-7.34f));
-                    
-                    oneThreeList.Add(new Vector3(-9.4f,0,1.4f));
-                    oneThreeList.Add(new Vector3(-8.6f,0,6.3f));
-                    oneThreeList.Add(new Vector3(-4f,0,8.6f));
-                    oneThreeList.Add(new Vector3(1.3f,0,9.1f));
-                    oneThreeList.Add(new Vector3(4.9f,0,9f));
 
-                    oneFiveList.Add(new Vector3(5.36f,0,-7.34f));
-                    oneFiveList.Add(new Vector3(8.4f,0,-4.5f));
-                    oneFiveList.Add(new Vector3(9.4f,0,0f));
-                    oneFiveList.Add(new Vector3(8.6f,0,3.5f));
-                    oneFiveList.Add(new Vector3(7.4f,0,6.6f));
-                    oneFiveList.Add(new Vector3(4.9f,0,9f));
-
-                    fiveThreeList.Add(new Vector3(-9.4f,0,1.4f));
-                    fiveThreeList.Add(new Vector3(-8.3f,0,-2.6f));
-                    fiveThreeList.Add(new Vector3(-5.8f,0,-6f));
-                    fiveThreeList.Add(new Vector3(-2.9f,0,-8.13f));
-                    fiveThreeList.Add(new Vector3(1.18f,0,-9.15f));
-                    fiveThreeList.Add(new Vector3(5.36f,0,-7.34f));
-
-                    threeFiveList.Add(new Vector3(5.36f,0,-7.34f));
-                    threeFiveList.Add(new Vector3(1.18f,0,-9.15f));
-                    threeFiveList.Add(new Vector3(-2.9f,0,-8.13f));
-                    threeFiveList.Add(new Vector3(-5.8f,0,-6f));
-                    threeFiveList.Add(new Vector3(-8.3f,0,-2.6f));
-                    threeFiveList.Add(new Vector3(-9.4f,0,1.4f));
-
-                    ShowPreview(previewBuildingPondSO, pondWaypoints);
+                    ShowPreview(previewBuildingPondSO);
                 }
             });
             buildingButton.onClick.AddListener(() => {
                 Debug.Log("buildingButton button 2 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
-                    Dictionary<int, Dictionary<int, List<Vector3>>> villageWaypoints =
-                        new Dictionary<int, Dictionary<int, List<Vector3>>>();
-                    List<Vector3> list = new List<Vector3>();
-                    villageWaypoints[2] = new Dictionary<int, List<Vector3>>();
-                    villageWaypoints[4] = new Dictionary<int, List<Vector3>>();
-                    list.Add(new Vector3(4.7f,0,-10.5f));
-                    list.Add(new Vector3(3.6f,0,-6.66f));
-                    list.Add(new Vector3(3.74f,0,-1.65f));
-                    list.Add(new Vector3(4.87f,0,3.72f));
-                    List<Vector3> fiveList = new List<Vector3>();
-                    
-                    fiveList.Add(new Vector3(4.7f,0,10.3f));
-                    fiveList.Add(new Vector3(4f,0,4.8f));
-                    fiveList.Add(new Vector3(4.6f,0,-4.63f));
-                    fiveList.Add(new Vector3(5.76f,0,-8.5f));
-                    
-                    villageWaypoints[2][4] = list;
-                    villageWaypoints[4][2] = fiveList;
-                    ShowPreview(previewBuildingVillageSO, villageWaypoints);
+
+                    ShowPreview(previewBuildingVillageSO);
                 }
             });
             bigBuildingButton.onClick.AddListener(() => {
                 Debug.Log("bigBuildingButton button 3 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPizzeriaSO.cost) {
-                    ShowPreview(previewBuildingPizzeriaSO, null);
+                    ShowPreview(previewBuildingPizzeriaSO);
                 }
             });
 
@@ -235,9 +163,8 @@ namespace UI {
             populationCount.text = currentPopulation.ToString();
         }
 
-        private void ShowPreview(PreviewBuildingSO previewBuildingSo,
-            Dictionary<int, Dictionary<int, List<Vector3>>> waypoints) {
-            PreviewBuilding(previewBuildingSo, waypoints);
+        private void ShowPreview(PreviewBuildingSO previewBuildingSo) {
+            PreviewBuilding(previewBuildingSo);
         }
     }
 }
