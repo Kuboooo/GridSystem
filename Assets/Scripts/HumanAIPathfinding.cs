@@ -112,11 +112,6 @@ public class HumanAIPathfinding : MonoBehaviour {
                 int directionFrom = Hex.GetDirection(previousHex, hex);
                 int directionTo = Hex.GetDirection(futureHex, hex);
                 waypoints = hex.GetRoad(directionFrom, directionTo);
-                Debug.Log("Waypoints: " + waypoints.Count + "  currentWaypointIndex: " + currentWaypointIndex);
-                foreach (var wp in waypoints) {
-                    Debug.Log("Waypoint: " + wp);
-                }
-
                 if (waypoints?.Count > 0 && currentWaypointIndex < waypoints.Count) {
                     targetPosition = waypoints[currentWaypointIndex];
                     targetPosition += currentHex.worldPosition;

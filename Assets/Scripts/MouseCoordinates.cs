@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Enums;
+using SOs;
 using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,6 +14,11 @@ public class MouseCoordinates : MonoBehaviour {
     public static event Action<object, PreviewBuildingSO> OnBuildingBuilt;
     public Material material;
     private Material backupMaterial;
+
+    [SerializeField] private PreviewBuildingSO toLoadBuildingVillageSO;
+    [SerializeField] private PreviewBuildingSO toLoadBuildingPondSO;
+    [SerializeField] private PreviewBuildingSO toLoadBuildingPizzeriaSO;
+    [SerializeField] private GameObject baseHexPrefab;
 
     [SerializeField] private HexHighlighter hexHighlighter;
     [SerializeField] private Camera mainCamera;
@@ -39,11 +47,23 @@ public class MouseCoordinates : MonoBehaviour {
     private void OnEnable() {
         UIManager.OnPreviewingBuilding += OnPreviewingBuilding;
         UIManager.OnStopPreviewing += OnStopPreviewing;
+        UIManager.OnSaveGameButtonPressed += OnSaveGameButtonPressed;
+        UIManager.OnLoadGameButtonPressed += OnLoadGameButtonPressed;
     }
 
     private void OnDisable() {
         UIManager.OnPreviewingBuilding -= OnPreviewingBuilding;
         UIManager.OnStopPreviewing -= OnStopPreviewing;
+        UIManager.OnSaveGameButtonPressed -= OnSaveGameButtonPressed;
+        UIManager.OnLoadGameButtonPressed -= OnLoadGameButtonPressed;
+    }
+
+    private void OnSaveGameButtonPressed(object arg1, EventArgs arg2) {
+        Save();
+    }
+
+    private void OnLoadGameButtonPressed(object arg1, EventArgs arg2) {
+        Load();
     }
 
     private void Awake() {
@@ -168,28 +188,32 @@ public class MouseCoordinates : MonoBehaviour {
         int hexNumber = 0;
         foreach (var hex in hexesToBuild) {
             ProcessHex(hex, buildingInstance);
-            int[] newRoads = new int[previewBuildingSO.roads[hexNumber].roadArray.Length];
-            for (int i = 0; i < newRoads.Length; i++) {
-                newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % 6);
-            }
-
-            Dictionary<int, Dictionary<int, List<Vector3>>> waypoints =
-                new Dictionary<int, Dictionary<int, List<Vector3>>>();
-            for (int i = 0; i < 6; i++) {
-                waypoints[i] = new Dictionary<int, List<Vector3>>();
-                for (int j = 0; j < 6; j++) {
-                    waypoints[i][j] = new List<Vector3>();
-                }
-            }
-
-            hex.Roads = waypoints;
-            hex.SetRoads(waypointsForCurrentSO[hexNumber], currentRotation);
-            hex.AddConnections(newRoads);
-
+            ProcessWaypointsAndRoads(hexNumber, hex);
             hexNumber++;
         }
 
         FinalizeBuildingPlacement();
+    }
+
+    private void ProcessWaypointsAndRoads(int hexNumber, Hex hex) {
+        hex.SetMultiHexDirection(hexNumber);
+        int[] newRoads = new int[previewBuildingSO.roads[hexNumber].roadArray.Length];
+        for (int i = 0; i < newRoads.Length; i++) {
+            newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % 6);
+        }
+
+        Dictionary<int, Dictionary<int, List<Vector3>>> waypoints =
+            new Dictionary<int, Dictionary<int, List<Vector3>>>();
+        for (int i = 0; i < 6; i++) {
+            waypoints[i] = new Dictionary<int, List<Vector3>>();
+            for (int j = 0; j < 6; j++) {
+                waypoints[i][j] = new List<Vector3>();
+            }
+        }
+
+        hex.waypoints = waypoints;
+        hex.SetWaypoints(waypointsForCurrentSO[hexNumber], currentRotation);
+        hex.AddConnections(newRoads);
     }
 
     private void ProcessHex(Hex hex, GameObject buildingInstance) {
@@ -199,6 +223,8 @@ public class MouseCoordinates : MonoBehaviour {
         }
 
         hex.worldPosition = buildingInstance.transform.position;
+        hex.SetRotation(currentRotation);
+        hex.SetBuildingType(previewBuildingSO.buildingType);
         hexMap.Add(hex, buildingInstance);
         buildingsMap[hex] = buildingInstance;
     }
@@ -218,8 +244,10 @@ public class MouseCoordinates : MonoBehaviour {
         int direction1 = (0 + rotation) % 6;
         int direction2 = (5 + rotation) % 6;
 
-        hexesToBuild.Add(Hex.HexNeighbor(baseHex, direction1)); // First neighbor based on rotation
-        hexesToBuild.Add(Hex.HexNeighbor(baseHex, direction2)); // Second neighbor based on rotation
+        var neighbour1 = Hex.HexNeighbor(baseHex, direction1);
+        var neighbour2 = Hex.HexNeighbor(baseHex, direction2);
+        hexesToBuild.Add(neighbour1); // First neighbor based on rotation
+        hexesToBuild.Add(neighbour2); // Second neighbor based on rotation
 
         return hexesToBuild;
     }
@@ -310,4 +338,88 @@ public class MouseCoordinates : MonoBehaviour {
     public Layout GetLayout() {
         return layout;
     }
+
+    public void Save() {
+        Debug.Log(Application.persistentDataPath);
+        string path = Path.Combine(Application.persistentDataPath, "test.map");
+        using (
+            BinaryWriter writer =
+            new BinaryWriter(File.Open(path, FileMode.Create))
+        ) {
+            writer.Write(hexMap.Count);
+            foreach (var hexEntry in hexMap.Keys) {
+                hexEntry.Save(writer);
+            }
+        }
+    }
+
+    public void Load() {
+
+        foreach (var hex in hexMap.Values) {
+            Destroy(hex);
+        }
+
+        hexMap.Clear();
+        buildingsMap.Clear();
+
+        string path = Path.Combine(Application.persistentDataPath, "test.map");
+        using (
+            BinaryReader reader =
+            new BinaryReader(File.OpenRead(path))
+        ) {
+            int hexCount = reader.ReadInt32();
+            for (int i = 0; i < hexCount; i++) {
+                RedblockGrid.Hex hex = new RedblockGrid.Hex(0, 0, 0);
+                hex.Load(reader);
+                BuildingType buildingType = hex.GetBuildingType();
+                GameObject buildingInstance;
+                PreviewBuildingSO so;
+                if (BuildingType.Basic != buildingType) {
+                    if (BuildingType.Village == buildingType) {
+                        so = toLoadBuildingVillageSO;
+                        buildingInstance = Instantiate(toLoadBuildingVillageSO.prefabToBuild, hex.worldPosition,
+                            Quaternion.Euler(0, hex.GetRotation() * -60, 0));
+                    }
+                    else if (BuildingType.Pizzeria == buildingType) {
+                        so = toLoadBuildingPizzeriaSO;
+                        buildingInstance = Instantiate(toLoadBuildingPizzeriaSO.prefabToBuild, hex.worldPosition,
+                            Quaternion.Euler(0, hex.GetRotation() * -60, 0));
+                    }
+                    else {
+                        so = toLoadBuildingPondSO;
+                        buildingInstance = Instantiate(toLoadBuildingPondSO.prefabToBuild, hex.worldPosition,
+                            Quaternion.Euler(0, hex.GetRotation() * -60, 0));
+                    }
+
+                    buildingsMap.Add(hex, buildingInstance);
+
+                    int[] newRoads = new int[so.roads[hex.GetMultiHexDirection()].roadArray.Length];
+                    for (int x = 0; x < newRoads.Length; x++) {
+                        newRoads[x] = ((so.roads[hex.GetMultiHexDirection()].roadArray[x] + hex.GetRotation()) % 6);
+                    }
+
+                    Dictionary<int, Dictionary<int, List<Vector3>>> waypoints =
+                        new Dictionary<int, Dictionary<int, List<Vector3>>>();
+                    for (int k = 0; k < 6; k++) {
+                        waypoints[k] = new Dictionary<int, List<Vector3>>();
+                        for (int j = 0; j < 6; j++) {
+                            waypoints[k][j] = new List<Vector3>();
+                        }
+                    }
+
+                    hex.waypoints = waypoints;
+                    hex.SetWaypoints(so.waypoints[hex.GetMultiHexDirection()], hex.GetRotation());
+                    hex.AddConnections(newRoads);
+
+                }
+                else {
+                    buildingInstance = Instantiate(baseHexPrefab, hex.worldPosition, Quaternion.Euler(0, 0, 0));
+                }
+
+                hexMap.Add(hex, buildingInstance);
+            }
+        }
+    }
+
+
 }

@@ -6,11 +6,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI {
+
     public class UIManager : MonoBehaviour {
-        public static event Action<PreviewBuildingSO, Dictionary<int, Dictionary<int, List<Vector3>>>>
-            OnPreviewingBuilding;
+
+        public static event Action<PreviewBuildingSO> OnPreviewingBuilding;
 
         public static event Action<object, EventArgs> OnStopPreviewing;
+        public static event Action<object, EventArgs> OnSaveGameButtonPressed;
+        public static event Action<object, EventArgs> OnLoadGameButtonPressed;
 
         private static void PreviewBuilding(PreviewBuildingSO buildingSO) {
             OnPreviewingBuilding?.Invoke(buildingSO);
@@ -19,6 +22,17 @@ namespace UI {
         private static void StopPreviewing() {
             OnStopPreviewing?.Invoke(null, EventArgs.Empty);
         }
+
+        private static void SaveGame() {
+            OnSaveGameButtonPressed?.Invoke(null, EventArgs.Empty);
+        }
+
+        private static void LoadGame() {
+            OnLoadGameButtonPressed?.Invoke(null, EventArgs.Empty);
+        }
+
+        [SerializeField] private Button saveGameStateButton;
+        [SerializeField] private Button loadGameStateButton;
 
         [SerializeField] private Button natureButton;
         [SerializeField] private Button buildingButton;
@@ -60,6 +74,19 @@ namespace UI {
             moneyCount.text = 999999999.ToString();
             currentIncome = 5000;
             incomePerPopulation = 10;
+
+            saveGameStateButton.onClick.AddListener(() => {
+                Debug.Log("saveGameStateButton button clicked");
+                SaveGame();
+            });
+
+            loadGameStateButton.onClick.AddListener(() => {
+                Debug.Log("loadGameStateButton button clicked");
+                LoadGame();
+            });
+
+            
+            
             natureButton.onClick.AddListener(() => {
                 Debug.Log("natureButton button 1 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingPondSO.cost) {
@@ -166,5 +193,7 @@ namespace UI {
         private void ShowPreview(PreviewBuildingSO previewBuildingSo) {
             PreviewBuilding(previewBuildingSo);
         }
+
     }
+
 }

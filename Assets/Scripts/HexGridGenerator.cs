@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Enums;
 using UnityEngine;
 using UnityEngine.Android;
 
@@ -35,16 +36,18 @@ public class HexGridGenerator : MonoBehaviour {
             int r2 = Mathf.Min(gridHeight, -q + gridHeight);
             for (int r = r1; r <= r2; r++) {
                 RedblockGrid.Hex hex = new RedblockGrid.Hex(q, r, -q - r);
+                hex.SetBuildingType(BuildingType.Basic);
                 CreateHex(hex);
             }
         }
     }
 
-    void CreateHex(RedblockGrid.Hex hex) {
+    private void CreateHex(RedblockGrid.Hex hex) {
         if (hexMap.ContainsKey(hex)) return;
         RedblockGrid.Point pos = RedblockGrid.HexToPixel(layout, hex);
         Vector3 position = new Vector3((float)pos.x, 0, (float)pos.y);
         GameObject instantiate = Instantiate(hexPrefab, position, Quaternion.identity, transform);
+        hex.worldPosition = position;
         hexMap[hex] = instantiate;
     }
 
