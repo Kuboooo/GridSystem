@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b064bfede1fdb3a4799d26e268a9250f, type: 3}
+  m_Name: PreviewBuildingHospitalSO
+  m_EditorClassIdentifier: 
+  prefabToPreview: {fileID: 1123567565558726044, guid: f10a9b83ab7e32748a35ccd3f455c72d,
+    type: 3}
+  prefabToBuild: {fileID: 1123567565558726044, guid: 4ac5ccc5642a31e4c98cc43f7e08bdc6,
+    type: 3}
+  basePopulationGrowth: 1
+  tileSize: 1
+  cost: 100
+  buildingType: 4
+  roads:
+  - roadArray: 000000000100000002000000030000000400000005000000

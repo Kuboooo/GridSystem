@@ -28,6 +28,9 @@ namespace SOs {
                     break;
                 case BuildingType.Pizzeria:
                     InitializePizzeriaWaypoints();
+                    break;                
+                case BuildingType.Hospital:
+                    InitializePizzeriaWaypoints();
                     break;
                 // Add more cases for other building types
             }
@@ -218,6 +221,10 @@ namespace SOs {
             pizzeriaWaypointsList.Add(rightPizzeriaWaypoints);
             pizzeriaWaypointsList.Add(bottomPizzeriaWaypoints);
             waypoints = pizzeriaWaypointsList;
+        }
+
+        private void InitializeHospitalWaypoints() {
+            // TODO KUBO add waypoints
         }
 
     }

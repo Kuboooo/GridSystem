@@ -39,6 +39,7 @@ namespace UI {
         [SerializeField] private Button natureButton;
         [SerializeField] private Button buildingButton;
         [SerializeField] private Button bigBuildingButton;
+        [SerializeField] private Button hospitalButton;
         [SerializeField] private Button cancelPreview;
         
         [SerializeField] private TextMeshProUGUI populationCount;
@@ -48,6 +49,7 @@ namespace UI {
         [SerializeField] private PreviewBuildingSO previewBuildingVillageSO;
         [SerializeField] private PreviewBuildingSO previewBuildingPondSO;
         [SerializeField] private PreviewBuildingSO previewBuildingPizzeriaSO;
+        [SerializeField] private PreviewBuildingSO previewBuildingHospitalSO;
 
         [SerializeField] private Button hideBuildingUIButton;
         [SerializeField] private GameObject buildingUIToHide;
@@ -76,6 +78,7 @@ namespace UI {
             previewBuildingVillageSO.InitializeWaypoints();
             previewBuildingPondSO.InitializeWaypoints();
             previewBuildingPizzeriaSO.InitializeWaypoints();
+            previewBuildingHospitalSO.InitializeWaypoints();
 
             //TODO KUBO
             moneyCount.text = 999999999.ToString();
@@ -91,8 +94,6 @@ namespace UI {
                 Debug.Log("loadGameStateButton button clicked");
                 LoadGame();
             });
-
-            
             
             natureButton.onClick.AddListener(() => {
                 Debug.Log("natureButton button 1 clicked");
@@ -106,6 +107,12 @@ namespace UI {
                 if (int.Parse(moneyCount.text) >= previewBuildingVillageSO.cost) {
 
                     ShowPreview(previewBuildingVillageSO);
+                }
+            });
+            hospitalButton.onClick.AddListener(() => {
+                Debug.Log("hospital button 4 clicked");
+                if (int.Parse(moneyCount.text) >= previewBuildingHospitalSO.cost) {
+                    ShowPreview(previewBuildingHospitalSO);
                 }
             });
             bigBuildingButton.onClick.AddListener(() => {

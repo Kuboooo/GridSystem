@@ -371,7 +371,7 @@ public class MouseCoordinates : MonoBehaviour {
         ) {
             int hexCount = reader.ReadInt32();
             for (int i = 0; i < hexCount; i++) {
-                RedblockGrid.Hex hex = new RedblockGrid.Hex(0, 0, 0);
+                Hex hex = new Hex(0, 0, 0);
                 hex.Load(reader);
                 BuildingType buildingType = hex.GetBuildingType();
                 GameObject buildingInstance;
@@ -379,20 +379,16 @@ public class MouseCoordinates : MonoBehaviour {
                 if (BuildingType.Basic != buildingType) {
                     if (BuildingType.Village == buildingType) {
                         so = toLoadBuildingVillageSO;
-                        buildingInstance = Instantiate(toLoadBuildingVillageSO.prefabToBuild, hex.worldPosition,
-                            Quaternion.Euler(0, hex.GetRotation() * -60, 0));
                     }
                     else if (BuildingType.Pizzeria == buildingType) {
                         so = toLoadBuildingPizzeriaSO;
-                        buildingInstance = Instantiate(toLoadBuildingPizzeriaSO.prefabToBuild, hex.worldPosition,
-                            Quaternion.Euler(0, hex.GetRotation() * -60, 0));
                     }
                     else {
                         so = toLoadBuildingPondSO;
-                        buildingInstance = Instantiate(toLoadBuildingPondSO.prefabToBuild, hex.worldPosition,
-                            Quaternion.Euler(0, hex.GetRotation() * -60, 0));
                     }
 
+                    buildingInstance = Instantiate(so.prefabToBuild, hex.worldPosition,
+                        Quaternion.Euler(0, hex.GetRotation() * -60, 0));
                     buildingsMap.Add(hex, buildingInstance);
 
                     int[] newRoads = new int[so.roads[hex.GetMultiHexDirection()].roadArray.Length];

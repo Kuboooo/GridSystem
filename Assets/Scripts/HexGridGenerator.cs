@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Enums;
 using UnityEngine;
 using UnityEngine.Android;
+using UnityEngine.EventSystems;
 
 public class HexGridGenerator : MonoBehaviour {
     public static HexGridGenerator GetInstance() {
@@ -60,7 +61,7 @@ public class HexGridGenerator : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.GetMouseButtonDown(0)) {
+        if ( !EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonDown(0)) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             // TODO KUBO we now need to restrict the building to the grid only, because it can build upon already built building 

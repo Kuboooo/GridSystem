@@ -5,7 +5,8 @@
         Basic,
         Village,
         Pond,
-        Pizzeria
+        Pizzeria,
+        Hospital
 
     }
 
