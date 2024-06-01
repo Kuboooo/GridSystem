@@ -11,6 +11,12 @@ public class CameraController : MonoBehaviour {
     [SerializeField] private float moveTime = 10f;
     [SerializeField] float rotationAmount = 1;
     [SerializeField] Vector3 zoomAmount;
+    
+    [SerializeField] private float minZoomY = 20f;
+    [SerializeField] private float maxZoomY = 280f;    
+    [SerializeField] private float minZoomZ = -20f;
+    [SerializeField] private float maxZoomZ = -280f;
+    
 
 
     [SerializeField] private Quaternion newRotation;
@@ -112,6 +118,9 @@ public class CameraController : MonoBehaviour {
             newZoom -= zoomAmount;
         }
 
+        // Clamping the zoom values
+        newZoom.y = Mathf.Clamp(newZoom.y, minZoomY, maxZoomY);
+        newZoom.z = Mathf.Clamp(newZoom.z, maxZoomZ, minZoomZ);  // min and max swapped to maintain consistency
 
         transform.position = Vector3.Lerp(transform.position, newPosition, moveTime * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, moveTime * Time.deltaTime);
