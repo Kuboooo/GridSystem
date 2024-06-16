@@ -6334,7 +6334,8 @@ MonoBehaviour:
     type: 2}
   toLoadBuildingHospitalSO: {fileID: 0}
   toLoadBuildingRoadMaintenanceSO: {fileID: 0}
-  toLoadBuildingPowerPlantSO: {fileID: 0}
+  toLoadBuildingPowerPlantSO: {fileID: 11400000, guid: 2e202c97b923ced43b20a99a462d0907,
+    type: 2}
   baseHexPrefab: {fileID: 1123567565558726044, guid: f0b9ae5d590e11b4e80575a81bbd9869,
     type: 3}
   hexHighlighter: {fileID: 0}

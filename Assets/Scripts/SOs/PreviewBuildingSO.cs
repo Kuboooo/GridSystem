@@ -33,6 +33,9 @@ namespace SOs {
                 case BuildingType.Hospital:
                     InitializePizzeriaWaypoints();
                     break;
+                case BuildingType.PowerPlant:
+                    InitializePowerPlantWaypoints();
+                    break;
                 // Add more cases for other building types
             }
         }
@@ -226,6 +229,19 @@ namespace SOs {
 
         private void InitializeHospitalWaypoints() {
             // TODO KUBO add waypoints
+        }
+
+        private void InitializePowerPlantWaypoints() {
+            var waypointsList = new List<Dictionary<int, Dictionary<int, List<Vector3>>>>();
+            var mainWaypoints = new Dictionary<int, Dictionary<int, List<Vector3>>>();
+            var rightWaypoints = new Dictionary<int, Dictionary<int, List<Vector3>>>();
+            var topWaypoints = new Dictionary<int, Dictionary<int, List<Vector3>>>();
+
+            waypointsList.Add(mainWaypoints);
+            waypointsList.Add(rightWaypoints);
+            waypointsList.Add(topWaypoints);
+            
+            waypoints = waypointsList;
         }
 
     }

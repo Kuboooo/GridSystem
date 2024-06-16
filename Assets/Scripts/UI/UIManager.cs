@@ -83,6 +83,7 @@ namespace UI {
             previewBuildingPondSO.InitializeWaypoints();
             previewBuildingPizzeriaSO.InitializeWaypoints();
             previewBuildingHospitalSO.InitializeWaypoints();
+            powerPlantBuildingSO.InitializeWaypoints();
 
             //TODO KUBO
             moneyCount.text = 999999999.ToString();
