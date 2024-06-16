@@ -10,7 +10,7 @@ public class HumanAIPathfinding : MonoBehaviour {
 
     private float moveSpeed = 40f; // Speed at which the transform moves towards the next hex
     private float moveTime; // Time elapsed since the last move
-    private float lastAttemptTime;
+    private float lastAttemptTime ;
     private Vector3 targetPosition = Vector3.zero;
     private MouseCoordinates mouseCoordinates;
     private Hex startingHex;
@@ -27,7 +27,7 @@ public class HumanAIPathfinding : MonoBehaviour {
     private void Start() {
         mouseCoordinates = MouseCoordinates.GetInstance();
         mouseCoordinates.GetHexFromMapNoRay(gameObject, out Hex startHex);
-        startingHex = mouseCoordinates.GetMap().Keys.FirstOrDefault(k => k == startHex);
+        startingHex = mouseCoordinates.GetKeyFromMap(startHex);
     }
 
     private void Update() {

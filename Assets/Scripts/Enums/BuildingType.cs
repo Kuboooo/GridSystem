@@ -6,7 +6,9 @@
         Village,
         Pond,
         Pizzeria,
-        Hospital
+        Hospital,
+        RoadMaintainance,
+        PowerPlant
 
     }
 

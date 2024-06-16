@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static RedblockGrid;
 
 public class HexPathfinding {
     public static List<RedblockGrid.Hex> FindPath(RedblockGrid.Hex start, RedblockGrid.Hex goal, Dictionary<RedblockGrid.Hex, GameObject> hexMap, Func<RedblockGrid.Hex, RedblockGrid.Hex, bool> isWalkable, int maxDistance) {
@@ -57,6 +58,7 @@ public class HexPathfinding {
         for (int i = 0; i <6; i++) {
             if (hex.HasConnection(i) && hexMap.ContainsKey(RedblockGrid.Hex.HexNeighbor(hex, i))) {
                 RedblockGrid.Hex hexWithConnections = hexMap.Keys.FirstOrDefault(k => k == RedblockGrid.Hex.HexNeighbor(hex, i));
+                if (hexWithConnections is null) continue;
                 if (hexWithConnections.HasConnection((i + 3) % 6)) {
                     neighbors.Add(hexWithConnections);
                 }
@@ -74,5 +76,21 @@ public class HexPathfinding {
         }
         path.Reverse();
         return path;
+    }
+
+    public static List<Hex>  GetInRangeCoordinates(Hex initialHex, int range) {
+        var results = new List<Hex>();
+        for (int q = -range; q <= range; q++)
+        {
+            int r1 = Math.Max(-range, -q - range);
+            int r2 = Math.Min(range, -q + range);
+            for (int r = r1; r <= r2; r++)
+            {
+                int s = -q - r;
+                results.Add(Hex.HexAdd(initialHex, new Hex(q, r, s)));
+            }
+        }
+
+        return results;
     }
 }

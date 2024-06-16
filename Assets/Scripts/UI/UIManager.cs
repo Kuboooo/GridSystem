@@ -39,6 +39,8 @@ namespace UI {
         [SerializeField] private Button natureButton;
         [SerializeField] private Button buildingButton;
         [SerializeField] private Button bigBuildingButton;
+        [SerializeField] private Button roadMaintenanceButton;
+        [SerializeField] private Button powerPlantBuildingButton;
         [SerializeField] private Button hospitalButton;
         [SerializeField] private Button cancelPreview;
         
@@ -50,6 +52,8 @@ namespace UI {
         [SerializeField] private PreviewBuildingSO previewBuildingPondSO;
         [SerializeField] private PreviewBuildingSO previewBuildingPizzeriaSO;
         [SerializeField] private PreviewBuildingSO previewBuildingHospitalSO;
+        [SerializeField] private PreviewBuildingSO previewRoadMaintenanceButtonSO;
+        [SerializeField] private PreviewBuildingSO powerPlantBuildingSO;
 
         [SerializeField] private Button hideBuildingUIButton;
         [SerializeField] private GameObject buildingUIToHide;
@@ -113,6 +117,18 @@ namespace UI {
                 Debug.Log("hospital button 4 clicked");
                 if (int.Parse(moneyCount.text) >= previewBuildingHospitalSO.cost) {
                     ShowPreview(previewBuildingHospitalSO);
+                }
+            });   
+            roadMaintenanceButton.onClick.AddListener(() => {
+                Debug.Log("RoadMaintenance button 4 clicked");
+                if (int.Parse(moneyCount.text) >= previewRoadMaintenanceButtonSO.cost) {
+                    ShowPreview(previewRoadMaintenanceButtonSO);
+                }
+            });
+            powerPlantBuildingButton.onClick.AddListener(() => {
+                Debug.Log("PowerPlant button clicked");
+                if (int.Parse(moneyCount.text) >= powerPlantBuildingSO.cost) {
+                    ShowPreview(powerPlantBuildingSO);
                 }
             });
             bigBuildingButton.onClick.AddListener(() => {

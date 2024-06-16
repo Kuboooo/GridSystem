@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Enums;
 using SOs;
 using UI;
@@ -9,7 +10,6 @@ using UnityEngine.EventSystems;
 using static RedblockGrid;
 
 public class MouseCoordinates : MonoBehaviour {
-
     private const string HEXOBJECT_LAYER = "HexObject";
     public static event Action<object, PreviewBuildingSO> OnBuildingBuilt;
     public Material material;
@@ -18,6 +18,9 @@ public class MouseCoordinates : MonoBehaviour {
     [SerializeField] private PreviewBuildingSO toLoadBuildingVillageSO;
     [SerializeField] private PreviewBuildingSO toLoadBuildingPondSO;
     [SerializeField] private PreviewBuildingSO toLoadBuildingPizzeriaSO;
+    [SerializeField] private PreviewBuildingSO toLoadBuildingHospitalSO;
+    [SerializeField] private PreviewBuildingSO toLoadBuildingRoadMaintenanceSO;
+    [SerializeField] private PreviewBuildingSO toLoadBuildingPowerPlantSO;
     [SerializeField] private GameObject baseHexPrefab;
 
     [SerializeField] private HexHighlighter hexHighlighter;
@@ -212,7 +215,7 @@ public class MouseCoordinates : MonoBehaviour {
         }
 
         hex.waypoints = waypoints;
-        hex.SetWaypoints(waypointsForCurrentSO[hexNumber], currentRotation);
+        hex.SetWaypoints(waypointsForCurrentSO?[hexNumber], currentRotation);
         hex.AddConnections(newRoads);
     }
 
@@ -223,6 +226,7 @@ public class MouseCoordinates : MonoBehaviour {
         }
 
         hex.worldPosition = buildingInstance.transform.position;
+        hex.SetBuildingType(previewBuildingSO.buildingType);
         hex.SetRotation(currentRotation);
         hex.SetBuildingType(previewBuildingSO.buildingType);
         hexMap.Add(hex, buildingInstance);
@@ -237,19 +241,33 @@ public class MouseCoordinates : MonoBehaviour {
     }
 
     private List<Hex> CalculateBuildingHexes(Hex baseHex, int rotation) {
-        List<Hex> hexesToBuild = new List<Hex> { baseHex };
-        baseHex.SetPizzeria();
+        List<Hex> hexesToBuild = InitializeHexesToBuild(baseHex);
 
-        // Rotate the direction indices based on the current rotation
-        int direction1 = (0 + rotation) % 6;
-        int direction2 = (5 + rotation) % 6;
-
-        var neighbour1 = Hex.HexNeighbor(baseHex, direction1);
-        var neighbour2 = Hex.HexNeighbor(baseHex, direction2);
-        hexesToBuild.Add(neighbour1); // First neighbor based on rotation
-        hexesToBuild.Add(neighbour2); // Second neighbor based on rotation
+        AddNeighborHexes(hexesToBuild, baseHex, rotation);
 
         return hexesToBuild;
+    }
+
+    private List<Hex> InitializeHexesToBuild(Hex baseHex) {
+        List<Hex> hexesToBuild = new List<Hex> { baseHex };
+
+        if (previewBuildingSO.buildingType == BuildingType.Pizzeria) {
+            baseHex.SetPizzeria();
+        }
+
+        return hexesToBuild;
+    }
+
+    private void AddNeighborHexes(List<Hex> hexesToBuild, Hex baseHex, int rotation) {
+        foreach (int index in previewBuildingSO.multiHexIndexPosition) {
+            int direction = CalculateDirection(index, rotation);
+            Hex neighbor = Hex.HexNeighbor(baseHex, direction);
+            hexesToBuild.Add(neighbor);
+        }
+    }
+
+    private int CalculateDirection(int index, int rotation) {
+        return (index + rotation) % 6;
     }
 
     private bool CanBuild(List<Hex> hexes) {
@@ -307,7 +325,7 @@ public class MouseCoordinates : MonoBehaviour {
         Ray ray = GetMouseRay(mousePos);
         if (Physics.Raycast(ray, out RaycastHit hit)) {
             GameObject hexObject = GetHexFromRay(hit, out Hex hex);
-            hexHighlighter.HighlightHex(hexObject);
+            HexHighlighter.HighlightHex(hexObject);
         }
     }
 
@@ -321,6 +339,10 @@ public class MouseCoordinates : MonoBehaviour {
         hex = HexRound(fractionalHex);
         hexMap.TryGetValue(hex, out GameObject hexObject);
         return hexObject;
+    }
+
+    public Hex GetKeyFromMap(Hex hex) {
+        return hexMap.Keys.FirstOrDefault(k => k == hex);
     }
 
     public Dictionary<Hex, GameObject> GetBuildingMap() {
@@ -356,7 +378,6 @@ public class MouseCoordinates : MonoBehaviour {
     }
 
     public void Load() {
-
         foreach (var hex in hexMap.Values) {
             Destroy(hex);
         }
@@ -383,8 +404,17 @@ public class MouseCoordinates : MonoBehaviour {
                     else if (BuildingType.Pizzeria == buildingType) {
                         so = toLoadBuildingPizzeriaSO;
                     }
-                    else {
+                    else if (BuildingType.Pond == buildingType) {
                         so = toLoadBuildingPondSO;
+                    }
+                    else if (BuildingType.Hospital == buildingType) {
+                        so = toLoadBuildingHospitalSO;
+                    }
+                    else if (BuildingType.PowerPlant == buildingType) {
+                        so = toLoadBuildingPowerPlantSO;
+                    }
+                    else {
+                        so = toLoadBuildingRoadMaintenanceSO;
                     }
 
                     buildingInstance = Instantiate(so.prefabToBuild, hex.worldPosition,
@@ -408,7 +438,6 @@ public class MouseCoordinates : MonoBehaviour {
                     hex.waypoints = waypoints;
                     hex.SetWaypoints(so.waypoints[hex.GetMultiHexDirection()], hex.GetRotation());
                     hex.AddConnections(newRoads);
-
                 }
                 else {
                     buildingInstance = Instantiate(baseHexPrefab, hex.worldPosition, Quaternion.Euler(0, 0, 0));
@@ -420,6 +449,4 @@ public class MouseCoordinates : MonoBehaviour {
             UIManager.instance.LoadStats(reader);
         }
     }
-
-
 }

@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b064bfede1fdb3a4799d26e268a9250f, type: 3}
-  m_Name: PreviewBuildingPizzeriaSO
+  m_Name: PreviewBuildingPowerPlantSO
   m_EditorClassIdentifier: 
-  prefabToPreview: {fileID: 3479475124327938400, guid: 988e443a5987b1f45a6de19d00bad3de,
+  prefabToPreview: {fileID: 1120878930415899165, guid: bd3c3f868ca8e644aa0baefe9d10174f,
     type: 3}
-  prefabToBuild: {fileID: 3479475124327938400, guid: 0599931af684cd14eb775b396e114228,
+  prefabToBuild: {fileID: 1120878930415899165, guid: 9dd669a7eef6fdb4a9b79a67ac2bdcda,
     type: 3}
-  basePopulationGrowth: 30
+  basePopulationGrowth: 1
   tileSize: 3
-  cost: 1000
-  buildingType: 3
+  cost: 100
+  buildingType: 6
   roads:
-  - roadArray: 0000000002000000
-  - roadArray: 000000000300000004000000
-  - roadArray: 0100000005000000
-  multiHexIndexPosition: 0000000005000000
+  - roadArray: 
+  - roadArray: 
+  - roadArray: 0300000005000000
+  multiHexIndexPosition: 0000000001000000
