@@ -24,34 +24,34 @@ public class HexHighlighter : MonoBehaviour {
         }
     }
 
-    // public static void HighlightHexRange(Hex mainHex, Dictionary<Hex, GameObject> hexMap, List<Hex> hexesInRange) {
-    //     if (previousRangeMainHex is not null && mainHex == previousRangeMainHex) {
-    //         return;
-    //     }
-    //     UnhighlightHexesRange();
-    //     hexMap.TryGetValue(mainHex, out GameObject mainHexObject);
-    //     previousRangeMainHex = mainHex;
-    //     previousHexMap = hexMap;
-    //     previousHexesInRange = hexesInRange;
-    //
-    //     mainHexObject?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(true);
-    //     foreach (var hexInRange in hexesInRange) {
-    //         hexMap.TryGetValue(hexInRange, out GameObject inRangeHexObject);
-    //         inRangeHexObject?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(true);
-    //     }
-    // }
-
-    // public static void UnhighlightHexesRange() {
-    //     if (previousHexesInRange is null) return;
-    //
-    //     // previ?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(true);
-    //     foreach (var hexInRange in previousHexesInRange) {
-    //         previousHexMap.TryGetValue(hexInRange, out GameObject inRangeHexObject);
-    //         inRangeHexObject?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(false);
-    //     }
-    //
-    //     previousRangeMainHex = null;
-    //     previousHexMap = null;
-    //     previousHexesInRange = null;
-    // }
+    public static void HighlightHexRange(Hex mainHex, Dictionary<Hex, GameObject> hexMap, List<Hex> hexesInRange) {
+        if (previousRangeMainHex is not null && mainHex == previousRangeMainHex) {
+            return;
+        }
+        UnhighlightHexesRange();
+        hexMap.TryGetValue(mainHex, out GameObject mainHexObject);
+        previousRangeMainHex = mainHex;
+        previousHexMap = hexMap;
+        previousHexesInRange = hexesInRange;
+    
+        mainHexObject?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(true);
+        foreach (var hexInRange in hexesInRange) {
+            hexMap.TryGetValue(hexInRange, out GameObject inRangeHexObject);
+            inRangeHexObject?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(true);
+        }
+    }
+    
+    public static void UnhighlightHexesRange() {
+        if (previousHexesInRange is null) return;
+    
+        // previ?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(true);
+        foreach (var hexInRange in previousHexesInRange) {
+            previousHexMap.TryGetValue(hexInRange, out GameObject inRangeHexObject);
+            inRangeHexObject?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(false);
+        }
+    
+        previousRangeMainHex = null;
+        previousHexMap = null;
+        previousHexesInRange = null;
+    }
 }
