@@ -228,6 +228,7 @@ public class MouseCoordinates : MonoBehaviour {
         hex.worldPosition = buildingInstance.transform.position;
         hex.SetRotation(currentRotation);
         hex.SetBuildingType(previewBuildingSO.buildingType);
+        hex.SetAOERange(previewBuildingSO.baseRange);
         hexMap.Add(hex, buildingInstance);
         buildingsMap[hex] = buildingInstance;
     }

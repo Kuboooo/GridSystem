@@ -17,6 +17,7 @@ public class RedblockGrid {
         public Vector3 worldPosition;
         private int rotation = 0;
         private int multiHexDirection = 0;
+        private int aoeRange;
 
         public Dictionary<int, Dictionary<int, List<Vector3>>>
             waypoints; // Dictionary mapping direction to list of waypoints
@@ -68,6 +69,7 @@ public class RedblockGrid {
             writer.Write(rotation);
             writer.Write(buildingType.ToString());
             writer.Write(multiHexDirection);
+            writer.Write(aoeRange);
 
         }
 
@@ -80,6 +82,15 @@ public class RedblockGrid {
             rotation = reader.ReadInt32();
             buildingType = (BuildingType)Enum.Parse(typeof(BuildingType), reader.ReadString());
             multiHexDirection = reader.ReadInt32();
+            aoeRange = reader.ReadInt32();
+        }
+
+        public int GetAOERange() {
+            return aoeRange;
+        }
+        
+        public void SetAOERange(int aoeRange) {
+            this.aoeRange = aoeRange;
         }
 
         public int GetRotation() {

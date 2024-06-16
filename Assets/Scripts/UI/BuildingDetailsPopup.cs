@@ -1,24 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Enums;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using static RedblockGrid;
 
 namespace UI {
-
     public class BuildingDetailsPopup : MonoBehaviour {
-
         [SerializeField] private GameObject popupPanel;
         [SerializeField] private TextMeshProUGUI detailText;
-        [SerializeField] private SphereMeshGenerator sphereMeshGenerator;
-        [SerializeField] private CircleMesh circleMeshGenerator;
+
         private MouseCoordinates mouseCoordinates;
         private Camera mainCamera;
-
-        [SerializeField] private int areaOfEffect = 4;
 
         private void Start() {
             popupPanel.SetActive(false);
@@ -30,9 +19,6 @@ namespace UI {
             if (Input.GetMouseButton(1)) {
                 // ShowPopup();
                 // HighlightConnectedBuildingsInRange();
-               GetAllBuildingsInRange();
-                
-                // sphereMeshGenerator.GenerateMesh();
             }
             else {
                 HidePopup();
@@ -96,80 +82,5 @@ namespace UI {
             // Hide the popup
             popupPanel.SetActive(false);
         }
-
-        private void HighlightConnectedBuildingsInRange() {
-            Vector3 mousePos = Input.mousePosition;
-            Ray ray = GetMouseRay(mousePos);
-            Hex hex = null;
-            if (Physics.Raycast(ray, out RaycastHit hit)) {
-                mouseCoordinates.GetHexFromRay(hit, out hex);
-                hex = mouseCoordinates.GetKeyFromMap(hex);
-                if (hex is not null) {
-                    var onlyConnectedInRange = GetOnlyConnectedInRange(hex);
-                    HexHighlighter.HighlightHexRange(hex, mouseCoordinates.GetMap(), onlyConnectedInRange);
-                }
-            }
-        }
-        private  void GetAllBuildingsInRange() {
-            Vector3 mousePos = Input.mousePosition;
-            Ray ray = GetMouseRay(mousePos);
-            Hex hex;
-            float furthestX = 0;
-            if (Physics.Raycast(ray, out RaycastHit hit)) {
-                mouseCoordinates.GetHexFromRay(hit, out hex);
-                hex = mouseCoordinates.GetKeyFromMap(hex);
-                if (hex is not null) {
-                    var allInRange = GetAllInRange(hex);
-                    foreach (var inRange in allInRange) {
-                        if (Math.Abs(hex.worldPosition.x) + Math.Abs(inRange.worldPosition.x) > furthestX) {
-                            furthestX = hex.worldPosition.x - inRange.worldPosition.x;
-                        }
-                    }
-                sphereMeshGenerator.worldPosition = new Vector3(hex.worldPosition.x, hex.worldPosition.y, hex.worldPosition.z);
-                sphereMeshGenerator.radius = furthestX;
-                sphereMeshGenerator.GenerateMesh();
-                circleMeshGenerator.worldPosition = new Vector3(hex.worldPosition.x, hex.worldPosition.y, hex.worldPosition.z);
-                circleMeshGenerator.radius = furthestX;
-                circleMeshGenerator.GenerateMesh();
-                HexHighlighter.HighlightHexRange(hex, mouseCoordinates.GetMap(), allInRange);
-                }
-            }
-        }
-
-        private List<Hex> GetOnlyConnectedInRange(Hex hex) {
-            List<Hex> result = new List<Hex>();
-            var inRangeCoordinates = HexPathfinding.GetInRangeCoordinates(hex, 2);
-            Debug.Log("In range count: " + inRangeCoordinates.Count);
-            foreach (var hexInRange in inRangeCoordinates) {
-                Hex currentHex = mouseCoordinates.GetKeyFromMap(hexInRange);
-                if (currentHex is null || currentHex == hex) continue;
-                // if (currentHex.GetBuildingType() == BuildingType.Basic) continue;
-                // this calculates towards building pizzeria, not specific IS PIZZA check
-                // if (currentHex?.GetBuildingType() == BuildingType.Pizzeria) {
-                if (HexPathfinding.FindPath(hex, currentHex, mouseCoordinates.GetMap(), (_, _) => true,
-                        areaOfEffect) is not null) {
-                    result.Add(currentHex);
-                }
-                // }
-            }
-
-            Debug.Log("Results count: " + result.Count);
-            return result;
-        }
-
-        private List<Hex> GetAllInRange(Hex hex) {
-            List<Hex> result = new List<Hex>();
-            var inRangeCoordinates = HexPathfinding.GetInRangeCoordinates(hex, areaOfEffect);
-            foreach (var hexInRange in inRangeCoordinates) {
-                Hex currentHex = mouseCoordinates.GetKeyFromMap(hexInRange);
-                if (currentHex is null || currentHex == hex) continue;
-                result.Add(currentHex);
-            }
-
-            Debug.Log("Results count: " + result.Count);
-            return result;
-        }
-
     }
-
 }

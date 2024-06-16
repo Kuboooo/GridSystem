@@ -25,3 +25,4 @@ MonoBehaviour:
   - roadArray: 
   - roadArray: 0300000005000000
   multiHexIndexPosition: 0000000001000000
+  baseRange: 5

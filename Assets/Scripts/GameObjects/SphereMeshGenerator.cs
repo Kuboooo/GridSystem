@@ -1,18 +1,17 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class SphereMeshGenerator : MonoBehaviour
-{
-    public float radius = 15f; // Radius of the sphere
-    public int segments = 20; // Number of segments in each circle
+public class SphereMeshGenerator : MonoBehaviour {
+    private float radius = 15f; // Radius of the sphere
+    [SerializeField] public int segments = 20; // Number of segments in each circle
 
     public Vector3 worldPosition;
 
     private Mesh mesh;
 
 
-    public void GenerateMesh()
-    {
+    public void GenerateMesh(float inpuRadius) {
+        radius = inpuRadius;
         mesh = new Mesh();
 
         // Generate vertices and triangles
@@ -28,8 +27,7 @@ public class SphereMeshGenerator : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh;
     }
 
-    Vector3[] GenerateVertices()
-    {
+    Vector3[] GenerateVertices() {
         int vertexCount = (segments + 1) * (segments + 1);
         Vector3[] vertices = new Vector3[vertexCount];
 
@@ -39,26 +37,23 @@ public class SphereMeshGenerator : MonoBehaviour
         int vertexIndex = 0;
 
         // Generate vertices
-        for (int i = 0; i <= segments; i++)
-        {
+        for (int i = 0; i <= segments; i++) {
             float theta = i * deltaTheta;
-            for (int j = 0; j <= segments; j++)
-            {
+            for (int j = 0; j <= segments; j++) {
                 float phi = j * deltaPhi;
 
                 float x = radius * Mathf.Sin(phi) * Mathf.Cos(theta);
                 float y = radius * Mathf.Sin(phi) * Mathf.Sin(theta);
                 float z = radius * Mathf.Cos(phi);
 
-                vertices[vertexIndex++] = new Vector3(x, y, z)  + worldPosition;
+                vertices[vertexIndex++] = new Vector3(x, y, z) + worldPosition;
             }
         }
 
         return vertices;
     }
 
-    int[] GenerateTriangles()
-    {
+    int[] GenerateTriangles() {
         int triangleCount = segments * segments * 2 * 3; // 2 triangles per segment face, 3 vertices per triangle
         int[] triangles = new int[triangleCount];
 
@@ -66,10 +61,8 @@ public class SphereMeshGenerator : MonoBehaviour
         int vertexCount = segments + 1;
 
         // Generate triangles
-        for (int i = 0; i < segments; i++)
-        {
-            for (int j = 0; j < segments; j++)
-            {
+        for (int i = 0; i < segments; i++) {
+            for (int j = 0; j < segments; j++) {
                 int vertexIndex = i * vertexCount + j;
                 int nextVertexIndex = vertexIndex + vertexCount;
 

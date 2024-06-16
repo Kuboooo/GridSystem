@@ -16,6 +16,7 @@ namespace SOs {
         public List<Roads> roads;
         public List<Dictionary<int, Dictionary<int, List<Vector3>>>> waypoints;
         public List<int> multiHexIndexPosition;
+        public int baseRange;
 
         public void InitializeWaypoints() {
             waypoints = new List<Dictionary<int, Dictionary<int, List<Vector3>>>>();
