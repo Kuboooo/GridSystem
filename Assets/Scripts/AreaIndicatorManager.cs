@@ -38,6 +38,8 @@ public class AreaIndicatorManager : MonoBehaviour {
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
         mouseCoordinates.GetHexFromRay(hit, out hex);
         hex = mouseCoordinates.GetKeyFromMap(hex);
+        Destroy(currentCircle);
+        Destroy(currentSphere);
         if (hex is null || hex.GetAOERange() == 0) return;
         // FOR multihex buildings to select the main/parent and calculate and show area around it
         if (hex.GetMain() is not null) {
