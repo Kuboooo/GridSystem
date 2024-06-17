@@ -24,7 +24,7 @@ public class HexHighlighter : MonoBehaviour {
         }
     }
 
-    public static void HighlightHexRange(Hex mainHex, Dictionary<Hex, GameObject> hexMap, List<Hex> hexesInRange) {
+    public static void HighlightMultipleHexes(Hex mainHex, Dictionary<Hex, GameObject> hexMap, List<Hex> hexesInRange) {
         if (previousRangeMainHex is not null && mainHex == previousRangeMainHex) {
             return;
         }

@@ -18,6 +18,10 @@ public class RedblockGrid {
         private int rotation = 0;
         private int multiHexDirection = 0;
         private int aoeRange;
+        private int mainQ;
+        private int mainR;
+        private int mainS;
+        private Vector3 mainPosition;
 
         public Dictionary<int, Dictionary<int, List<Vector3>>>
             waypoints; // Dictionary mapping direction to list of waypoints
@@ -70,7 +74,12 @@ public class RedblockGrid {
             writer.Write(buildingType.ToString());
             writer.Write(multiHexDirection);
             writer.Write(aoeRange);
-
+            writer.Write(mainQ);
+            writer.Write(mainR);
+            writer.Write(mainS);
+            writer.Write(mainPosition.x);
+            writer.Write(mainPosition.y);
+            writer.Write(mainPosition.z);
         }
 
         public void Load(BinaryReader reader) {
@@ -83,8 +92,25 @@ public class RedblockGrid {
             buildingType = (BuildingType)Enum.Parse(typeof(BuildingType), reader.ReadString());
             multiHexDirection = reader.ReadInt32();
             aoeRange = reader.ReadInt32();
+            mainQ = reader.ReadInt32();
+            mainR = reader.ReadInt32();
+            mainS = reader.ReadInt32();
+            mainPosition = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
+        public Hex GetMain() {
+            Hex main = new Hex(mainQ, mainR, mainS);
+            main.worldPosition = mainPosition;
+            return main;
+        }
+        
+        public void SetMain(Hex main) {
+            mainQ = main.q_;
+            mainR = main.r_;
+            mainS = main.s_;
+            mainPosition = main.worldPosition;
+        }
+        
         public int GetAOERange() {
             return aoeRange;
         }

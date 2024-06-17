@@ -244,8 +244,15 @@ public class MouseCoordinates : MonoBehaviour {
         List<Hex> hexesToBuild = InitializeHexesToBuild(baseHex);
 
         AddNeighborHexes(hexesToBuild, baseHex, rotation);
+        SpecifyMainHex(baseHex, hexesToBuild);
 
         return hexesToBuild;
+    }
+
+    private void SpecifyMainHex(Hex baseHex, List<Hex> hexesToBuild) {
+        foreach (var hex in hexesToBuild) {
+            hex.SetMain(baseHex);
+        }
     }
 
     private List<Hex> InitializeHexesToBuild(Hex baseHex) {
