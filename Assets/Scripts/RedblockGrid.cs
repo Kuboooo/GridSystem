@@ -244,6 +244,29 @@ public class RedblockGrid {
             return connections[edgeDirection];
         }
 
+        public static Hex RotateShoveHex(Hex centerHex, Hex hexToRotate, int rotation) {
+            var vector = HexSubtract(hexToRotate, centerHex);
+            for (int i = 0; i < rotation; i++) {
+                vector = RotateShoveOnce(vector);
+            }
+            return HexAdd(centerHex, vector);
+        }
+
+        private static Hex RotateShoveOnce(Hex hex) {
+            int q = hex.q_;
+            int r = hex.r_;
+            int s = hex.s_;
+
+            int newQ = -r;
+            int newR = -s;
+            int newS = -q;
+
+            // int newQ = -s;
+            // int newR = -q;
+            // int newS = -r;
+
+            return new Hex(newQ, newR, newS);
+        }
     }
 
     public struct Orientation {

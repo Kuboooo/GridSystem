@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using SOs;
 using TMPro;
@@ -79,11 +78,11 @@ namespace UI {
 
         private void Start() {
 
-            previewBuildingVillageSO.InitializeWaypoints();
-            previewBuildingPondSO.InitializeWaypoints();
-            previewBuildingPizzeriaSO.InitializeWaypoints();
-            previewBuildingHospitalSO.InitializeWaypoints();
-            powerPlantBuildingSO.InitializeWaypoints();
+            previewBuildingVillageSO.InitializeSO();
+            previewBuildingPondSO.InitializeSO();
+            previewBuildingPizzeriaSO.InitializeSO();
+            previewBuildingHospitalSO.InitializeSO();
+            powerPlantBuildingSO.InitializeSO();
 
             //TODO KUBO
             moneyCount.text = 999999999.ToString();

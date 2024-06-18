@@ -200,6 +200,7 @@ public class MouseCoordinates : MonoBehaviour {
 
     private void ProcessWaypointsAndRoads(int hexNumber, Hex hex) {
         hex.SetMultiHexDirection(hexNumber);
+        if (previewBuildingSO.roads == null) return;
         int[] newRoads = new int[previewBuildingSO.roads[hexNumber].roadArray.Length];
         for (int i = 0; i < newRoads.Length; i++) {
             newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % 6);
@@ -249,6 +250,24 @@ public class MouseCoordinates : MonoBehaviour {
         return hexesToBuild;
     }
 
+    private void AddNeighborHexes(List<Hex> hexesToBuild, Hex baseHex, int rotation) {
+        if (previewBuildingSO.multiHexPositionDirectionList is not null) {
+            Debug.Log("Adding neighbpuring hexes for: " + previewBuildingSO.multiHexPositionDirectionList.Count);
+            foreach (Hex multiHexPositionDirection in previewBuildingSO.multiHexPositionDirectionList) {
+                var hexAdd = Hex.HexAdd(baseHex, multiHexPositionDirection);
+                var rotatedHex = Hex.RotateShoveHex(baseHex,hexAdd, rotation);
+                hexesToBuild.Add(rotatedHex);
+            }
+        }
+        else {
+            foreach (int index in previewBuildingSO.multiHexIndexPosition) {
+                int direction = CalculateDirection(index, rotation);
+                Hex neighbor = Hex.HexNeighbor(baseHex, direction);
+                hexesToBuild.Add(neighbor);
+            }
+        }
+    }
+
     private void SpecifyMainHex(Hex baseHex, List<Hex> hexesToBuild) {
         foreach (var hex in hexesToBuild) {
             hex.SetMain(baseHex);
@@ -263,14 +282,6 @@ public class MouseCoordinates : MonoBehaviour {
         }
 
         return hexesToBuild;
-    }
-
-    private void AddNeighborHexes(List<Hex> hexesToBuild, Hex baseHex, int rotation) {
-        foreach (int index in previewBuildingSO.multiHexIndexPosition) {
-            int direction = CalculateDirection(index, rotation);
-            Hex neighbor = Hex.HexNeighbor(baseHex, direction);
-            hexesToBuild.Add(neighbor);
-        }
     }
 
     private int CalculateDirection(int index, int rotation) {
@@ -403,8 +414,8 @@ public class MouseCoordinates : MonoBehaviour {
                 hex.Load(reader);
                 BuildingType buildingType = hex.GetBuildingType();
                 GameObject buildingInstance;
-                PreviewBuildingSO so;
                 if (BuildingType.Basic != buildingType) {
+                    PreviewBuildingSO so;
                     if (BuildingType.Village == buildingType) {
                         so = toLoadBuildingVillageSO;
                     }

@@ -4701,15 +4701,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 093bc1ba9ae03a245a37372c902d8b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sphereMeshGenerator: {fileID: 5519555721127617327, guid: 97ec535d816ae8a4299d204402651921,
-    type: 3}
-  circleMeshGeneratorGenerator: {fileID: 3647896857915655924, guid: 6bf2b22834661fa4686278d761a0645e,
-    type: 3}
   circlePrefab: {fileID: 8966543461227899906, guid: 6bf2b22834661fa4686278d761a0645e,
     type: 3}
   spherePrefab: {fileID: 2721108769752876136, guid: 97ec535d816ae8a4299d204402651921,
     type: 3}
-  areaOfEffect: 4
 --- !u!4 &1176973377
 Transform:
   m_ObjectHideFlags: 0
@@ -5785,7 +5780,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   popupPanel: {fileID: 163939987}
   detailText: {fileID: 192192922}
-  areaOfEffect: 3
 --- !u!4 &1415491977
 Transform:
   m_ObjectHideFlags: 0
@@ -6386,7 +6380,8 @@ MonoBehaviour:
     type: 2}
   toLoadBuildingPizzeriaSO: {fileID: 11400000, guid: 1f87072f7bef03f428c503d483b7b96d,
     type: 2}
-  toLoadBuildingHospitalSO: {fileID: 0}
+  toLoadBuildingHospitalSO: {fileID: 11400000, guid: 3e4e74398e4c5484a8920d56a1b4c2b3,
+    type: 2}
   toLoadBuildingRoadMaintenanceSO: {fileID: 0}
   toLoadBuildingPowerPlantSO: {fileID: 11400000, guid: 2e202c97b923ced43b20a99a462d0907,
     type: 2}
