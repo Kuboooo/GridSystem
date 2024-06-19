@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static RedblockGrid;
+using static Hex;
 
 public class HexRangeFinder {
     private static MouseCoordinates mouseCoordinates = MouseCoordinates.GetInstance();

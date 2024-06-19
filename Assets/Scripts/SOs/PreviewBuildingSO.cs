@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Enums;
 using SOs.SOHelpers;
 using UnityEngine;
-using static RedblockGrid;
+using static Hex;
 
 namespace SOs {
 

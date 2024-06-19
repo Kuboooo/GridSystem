@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Enums;
+using Grid;
 using SOs;
 using UI;
 using UnityEngine;
-using static RedblockGrid;
+using static Hex;
 
 public class GameStateManager : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class GameStateManager : MonoBehaviour
     [SerializeField] private PreviewBuildingSO toLoadBuildingRoadMaintenanceSO;
     [SerializeField] private PreviewBuildingSO toLoadBuildingPowerPlantSO;
     [SerializeField] private GameObject baseHexPrefab;
+    [SerializeField] private HexSerialization hexSerializer;
     
     private const int MAX_ROTATION = 6;
     
@@ -41,6 +43,10 @@ public class GameStateManager : MonoBehaviour
         Save();
     }
 
+    private void Start() {
+        hexSerializer = new HexSerialization();
+    }
+
     public void Save() {
         buildingsMap = MouseCoordinates.GetInstance().GetBuildingMap();
         hexMap = MouseCoordinates.GetInstance().GetMap();
@@ -52,7 +58,7 @@ public class GameStateManager : MonoBehaviour
         ) {
             writer.Write(hexMap.Count);
             foreach (var hexEntry in hexMap.Keys) {
-                hexEntry.Save(writer);
+                hexSerializer.Save(writer,hexEntry,hexEntry.GetHexProperties());
             }
 
             UIManager.instance.SaveStats(writer);
@@ -75,8 +81,8 @@ public class GameStateManager : MonoBehaviour
             int hexCount = reader.ReadInt32();
             for (int i = 0; i < hexCount; i++) {
                 Hex hex = new Hex(0, 0, 0);
-                hex.Load(reader);
-                BuildingType buildingType = hex.GetBuildingType();
+                hexSerializer.Load(reader, hex, hex.GetHexProperties());
+                BuildingType buildingType = hex.GetHexProperties().GetBuildingType();
                 GameObject buildingInstance;
                 if (BuildingType.Basic != buildingType) {
                     PreviewBuildingSO so;
@@ -99,13 +105,13 @@ public class GameStateManager : MonoBehaviour
                         so = toLoadBuildingRoadMaintenanceSO;
                     }
 
-                    buildingInstance = Instantiate(so.prefabToBuild, hex.worldPosition,
-                        Quaternion.Euler(0, hex.GetRotation() * -60, 0));
+                    buildingInstance = Instantiate(so.prefabToBuild, hex.GetHexProperties().worldPosition,
+                        Quaternion.Euler(0, hex.GetHexProperties().GetRotation() * -60, 0));
                     buildingsMap.Add(hex, buildingInstance);
 
-                    int[] newRoads = new int[so.roads[hex.GetMultiHexDirection()].roadArray.Length];
+                    int[] newRoads = new int[so.roads[hex.GetHexProperties().GetMultiHexDirection()].roadArray.Length];
                     for (int x = 0; x < newRoads.Length; x++) {
-                        newRoads[x] = ((so.roads[hex.GetMultiHexDirection()].roadArray[x] + hex.GetRotation()) %
+                        newRoads[x] = ((so.roads[hex.GetHexProperties().GetMultiHexDirection()].roadArray[x] + hex.GetHexProperties().GetRotation()) %
                                        MAX_ROTATION);
                     }
 
@@ -118,12 +124,12 @@ public class GameStateManager : MonoBehaviour
                         }
                     }
 
-                    hex.waypoints = waypoints;
-                    hex.SetWaypoints(so.waypoints[hex.GetMultiHexDirection()], hex.GetRotation());
+                    hex.GetHexWaypoints().waypoints = waypoints;
+                    hex.GetHexWaypoints().SetWaypoints(so.waypoints[hex.GetHexProperties().GetMultiHexDirection()], hex.GetHexProperties().GetRotation());
                     hex.AddConnections(newRoads);
                 }
                 else {
-                    buildingInstance = Instantiate(baseHexPrefab, hex.worldPosition, Quaternion.Euler(0, 0, 0));
+                    buildingInstance = Instantiate(baseHexPrefab, hex.GetHexProperties().worldPosition, Quaternion.Euler(0, 0, 0));
                 }
 
                 hexMap.Add(hex, buildingInstance);

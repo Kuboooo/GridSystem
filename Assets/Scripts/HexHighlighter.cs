@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static RedblockGrid;
+using static Hex;
 
 public class HexHighlighter : MonoBehaviour {
     private const string HEX_HOVER_IDENTIFIER = "Selected";

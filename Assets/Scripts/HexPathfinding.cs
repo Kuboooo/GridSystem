@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static RedblockGrid;
+using static Hex;
 
 public class HexPathfinding {
-    public static List<RedblockGrid.Hex> FindPath(RedblockGrid.Hex start, RedblockGrid.Hex goal, Dictionary<RedblockGrid.Hex, GameObject> hexMap, Func<RedblockGrid.Hex, RedblockGrid.Hex, bool> isWalkable, int maxDistance) {
-        var openList = new PriorityQueue<RedblockGrid.Hex>();
-        var cameFrom = new Dictionary<RedblockGrid.Hex, RedblockGrid.Hex>();
-        var gScore = new Dictionary<RedblockGrid.Hex, float>();
-        var fScore = new Dictionary<RedblockGrid.Hex, float>();
+    public static List<Hex> FindPath(Hex start, Hex goal, Dictionary<Hex, GameObject> hexMap, Func<Hex, Hex, bool> isWalkable, int maxDistance) {
+        var openList = new PriorityQueue<Hex>();
+        var cameFrom = new Dictionary<Hex, Hex>();
+        var gScore = new Dictionary<Hex, float>();
+        var fScore = new Dictionary<Hex, float>();
 
         gScore[start] = 0;
         fScore[start] = Heuristic(start, goal);
@@ -48,16 +48,16 @@ public class HexPathfinding {
         return null; // No path found
     }
 
-    private static float Heuristic(RedblockGrid.Hex a, RedblockGrid.Hex b) {
-        return RedblockGrid.Hex.HexDistance(a, b);
+    private static float Heuristic(Hex a, Hex b) {
+        return Hex.HexDistance(a, b);
     }
 
-    private static List<RedblockGrid.Hex> GetNeighborsConnected(RedblockGrid.Hex hex, Dictionary<RedblockGrid.Hex, GameObject> hexMap) {
-        var neighbors = new List<RedblockGrid.Hex>();
+    private static List<Hex> GetNeighborsConnected(Hex hex, Dictionary<Hex, GameObject> hexMap) {
+        var neighbors = new List<Hex>();
 
         for (int i = 0; i <6; i++) {
-            if (hex.HasConnection(i) && hexMap.ContainsKey(RedblockGrid.Hex.HexNeighbor(hex, i))) {
-                RedblockGrid.Hex hexWithConnections = hexMap.Keys.FirstOrDefault(k => k == RedblockGrid.Hex.HexNeighbor(hex, i));
+            if (hex.HasConnection(i) && hexMap.ContainsKey(Hex.HexNeighbor(hex, i))) {
+                Hex hexWithConnections = hexMap.Keys.FirstOrDefault(k => k == Hex.HexNeighbor(hex, i));
                 if (hexWithConnections is null) continue;
                 if (hexWithConnections.HasConnection((i + 3) % 6)) {
                     neighbors.Add(hexWithConnections);
@@ -68,8 +68,8 @@ public class HexPathfinding {
         return neighbors;
     }
 
-    private static List<RedblockGrid.Hex> ReconstructPath(Dictionary<RedblockGrid.Hex, RedblockGrid.Hex> cameFrom, RedblockGrid.Hex current) {
-        var path = new List<RedblockGrid.Hex> { current };
+    private static List<Hex> ReconstructPath(Dictionary<Hex, Hex> cameFrom, Hex current) {
+        var path = new List<Hex> { current };
         while (cameFrom.ContainsKey(current)) {
             current = cameFrom[current];
             path.Add(current);

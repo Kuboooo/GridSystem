@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Grid;
 using UnityEngine;
-using static RedblockGrid;
+using static Hex;
+using Layout = Grid.Layout;
 
 public class MouseCoordinates : MonoBehaviour {
     

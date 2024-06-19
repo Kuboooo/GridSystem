@@ -1,4 +1,4 @@
-﻿using static RedblockGrid;
+﻿using static Hex;
 
 namespace DefaultNamespace {
     public class HexDirectionBuilder {

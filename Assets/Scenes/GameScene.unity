@@ -6477,10 +6477,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258dc6bd2918c924a9df3e6be6b950e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: e10e72f4470345446baf7bed386909fb, type: 2}
   mainCamera: {fileID: 330585545}
   map: {fileID: 1304851156}
-  previewContainer: {fileID: 1877683296}
 --- !u!4 &1608714891
 Transform:
   m_ObjectHideFlags: 0

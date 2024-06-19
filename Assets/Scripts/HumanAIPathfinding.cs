@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Grid;
 using UnityEngine;
-using static RedblockGrid;
+using static Hex;
 
 public class HumanAIPathfinding : MonoBehaviour {
     [SerializeField] int maxDistance = 1;
@@ -45,7 +46,7 @@ public class HumanAIPathfinding : MonoBehaviour {
         float closestPizzeriaDistance = float.MaxValue;
         lastAttemptTime = 0f;
         foreach (Hex hex in mouseCoordinates.GetBuildingMap().Keys) {
-            if (!hex.IsPizzeria) continue;
+            if (!hex.GetHexProperties().IsPizzeria) continue;
 
             var potentialPath = HexPathfinding.FindPath(startingHex, hex, mouseCoordinates.GetMap(), (_, _) => true,
                 maxDistance);
@@ -79,7 +80,7 @@ public class HumanAIPathfinding : MonoBehaviour {
             if (waypoints?.Count > 0 && currentWaypointIndex < waypoints.Count) {
                 targetPosition = waypoints[currentWaypointIndex];
                 currentWaypointIndex++;
-                targetPosition += currentHex.worldPosition;
+                targetPosition += currentHex.GetHexProperties().worldPosition;
                 return;
             }
 
@@ -111,10 +112,10 @@ public class HumanAIPathfinding : MonoBehaviour {
                 currentHex = hex;
                 int directionFrom = Hex.GetDirection(previousHex, hex);
                 int directionTo = Hex.GetDirection(futureHex, hex);
-                waypoints = hex.GetRoad(directionFrom, directionTo);
+                waypoints = hex.GetHexWaypoints().GetRoad(directionFrom, directionTo);
                 if (waypoints?.Count > 0 && currentWaypointIndex < waypoints.Count) {
                     targetPosition = waypoints[currentWaypointIndex];
-                    targetPosition += currentHex.worldPosition;
+                    targetPosition += currentHex.GetHexProperties().worldPosition;
                     transform.position =
                         Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
                 }

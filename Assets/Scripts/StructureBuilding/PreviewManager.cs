@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Enums;
+using Grid;
 using SOs;
 using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static RedblockGrid;
+using static Hex;
 
 public class PreviewManager : MonoBehaviour
 {
@@ -62,7 +63,6 @@ public class PreviewManager : MonoBehaviour
 
         RaycastHit hit;
         if (mouseCoordinates.TryGetRaycastHit(out hit)) {
-            Debug.Log("Previwing?: " + previewing);
             ShowPreviewOnRaycastHit(hit, out List<Hex> hexesToBuild);
             if (CanBuild(hexesToBuild)) {
                 UpdatePreviewColor(true);
@@ -162,7 +162,7 @@ public class PreviewManager : MonoBehaviour
         List<Hex> hexesToBuild = new List<Hex> { baseHex };
 
         if (previewBuildingSO.buildingType == BuildingType.Pizzeria) {
-            baseHex.SetPizzeria();
+            baseHex.GetHexProperties().SetPizzeria(true);
         }
 
         return hexesToBuild;
@@ -170,10 +170,9 @@ public class PreviewManager : MonoBehaviour
     
     private void AddNeighborHexes(List<Hex> hexesToBuild, Hex baseHex, int rotation) {
         if (previewBuildingSO.multiHexPositionDirectionList is not null) {
-            Debug.Log("Adding neighbpuring hexes for: " + previewBuildingSO.multiHexPositionDirectionList.Count);
             foreach (Hex multiHexPositionDirection in previewBuildingSO.multiHexPositionDirectionList) {
-                var hexAdd = Hex.HexAdd(baseHex, multiHexPositionDirection);
-                var rotatedHex = Hex.RotateShoveHex(baseHex, hexAdd, rotation);
+                var hexAdd = HexAdd(baseHex, multiHexPositionDirection);
+                var rotatedHex = RotateShoveHex(baseHex, hexAdd, rotation);
                 hexesToBuild.Add(rotatedHex);
             }
         }
@@ -190,7 +189,7 @@ public class PreviewManager : MonoBehaviour
     }
     private void SpecifyMainHex(Hex baseHex, List<Hex> hexesToBuild) {
         foreach (var hex in hexesToBuild) {
-            hex.SetMain(baseHex);
+            hex.GetHexProperties().SetMainCoordinates(baseHex);
         }
     }
     
@@ -199,11 +198,18 @@ public class PreviewManager : MonoBehaviour
         Vector3 position = new Vector3((float)pointPosition.x, 1.5f, (float)pointPosition.y);
         previewInstance.transform.position = new Vector3(position.x, 1.5f, position.z);
     }
+
     private bool CanBuild(List<Hex> hexes) {
         foreach (var hex in hexes) {
             if (mouseCoordinates.GetBuildingMap().ContainsKey(hex) || !mouseCoordinates.GetMap().ContainsKey(hex)) {
+                Debug.Log("Cannot build");
                 return false;
             }
+
+            Debug.Log("Can build here mouseCoordinates.GetBuildingMap().ContainsKey(hex): " +
+                      mouseCoordinates.GetBuildingMap().ContainsKey(hex));
+            Debug.Log("Can build here mouseCoordinates.GetMap().ContainsKey(hex): " +
+                      !mouseCoordinates.GetMap().ContainsKey(hex));
         }
 
         return true;

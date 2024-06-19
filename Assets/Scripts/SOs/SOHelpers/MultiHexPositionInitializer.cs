@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using DefaultNamespace;
-using static RedblockGrid;
+using static Hex;
 
 namespace SOs.SOHelpers {
     public class MultiHexPositionInitializer {

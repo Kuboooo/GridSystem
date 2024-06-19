@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Grid;
 using SOs;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static RedblockGrid;
+using static Hex;
 
 public class BuildingPlacer : MonoBehaviour {
     
@@ -16,13 +17,10 @@ public class BuildingPlacer : MonoBehaviour {
     
     private int currentRotation;
     private PreviewBuildingSO previewBuildingSO;
-    private HexGridGenerator hexGridGenerator;
-    private Dictionary<Hex, GameObject> hexMap;
-    private Dictionary<Hex, GameObject> buildingsMap = new();
+    private MouseCoordinates mouseCoordinates;
 
     private void Start() {
-        hexGridGenerator = HexGridGenerator.GetInstance();
-        hexMap = hexGridGenerator.GetHexMap();
+        mouseCoordinates = MouseCoordinates.GetInstance();
     }
 
     public void PlaceBuilding(List<Hex> hexesToBuild, GameObject buildingToBuild, GameObject previewInstance, int currentRotationParam, PreviewBuildingSO previewBuildingSOparam) {
@@ -48,21 +46,22 @@ public class BuildingPlacer : MonoBehaviour {
     }
 
     private void ProcessHex(Hex hex, GameObject buildingInstance) {
-        if (hexMap.TryGetValue(hex, out GameObject hexObjectPart)) {
+        if (mouseCoordinates.GetMap().TryGetValue(hex, out GameObject hexObjectPart)) {
             Destroy(hexObjectPart);
-            hexMap.Remove(hex);
+            mouseCoordinates.GetMap().Remove(hex);
         }
 
-        hex.worldPosition = buildingInstance.transform.position;
-        hex.SetRotation(currentRotation);
-        hex.SetBuildingType(previewBuildingSO.buildingType);
-        hex.SetAOERange(previewBuildingSO.baseRange);
-        hexMap.Add(hex, buildingInstance);
-        buildingsMap[hex] = buildingInstance;
+        hex.GetHexProperties().worldPosition = buildingInstance.transform.position;
+        hex.GetHexProperties().SetRotation(currentRotation);
+        hex.GetHexProperties().SetBuildingType(previewBuildingSO.buildingType);
+        hex.GetHexProperties().SetAOERange(previewBuildingSO.baseRange);
+        Debug.Log("Adding hex: ");
+        mouseCoordinates.GetMap().Add(hex, buildingInstance);
+        mouseCoordinates.GetBuildingMap()[hex] = buildingInstance;
     }
 
     private void ProcessWaypointsAndRoads(int hexNumber, Hex hex) {
-        hex.SetMultiHexDirection(hexNumber);
+        hex.GetHexProperties().SetMultiHexDirection(hexNumber);
         if (previewBuildingSO.roads == null) return;
         int[] newRoads = new int[previewBuildingSO.roads[hexNumber].roadArray.Length];
         for (int i = 0; i < newRoads.Length; i++) {
@@ -78,8 +77,8 @@ public class BuildingPlacer : MonoBehaviour {
             }
         }
 
-        hex.waypoints = waypoints;
-        hex.SetWaypoints(previewBuildingSO.waypoints?[hexNumber], currentRotation);
+        hex.GetHexWaypoints().waypoints = waypoints;
+        hex.GetHexWaypoints().SetWaypoints(previewBuildingSO.waypoints?[hexNumber], currentRotation);
         hex.AddConnections(newRoads);
     }
 
