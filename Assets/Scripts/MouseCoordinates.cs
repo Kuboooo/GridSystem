@@ -11,6 +11,7 @@ using static RedblockGrid;
 
 public class MouseCoordinates : MonoBehaviour {
     private const string HEXOBJECT_LAYER = "HexObject";
+    private const int MAX_ROTATION = 6;
     public static event Action<object, PreviewBuildingSO> OnBuildingBuilt;
     public Material material;
     private Material backupMaterial;
@@ -146,7 +147,7 @@ public class MouseCoordinates : MonoBehaviour {
     private void RotatePreviewInstance() {
         previewInstance.transform.rotation *= Quaternion.Euler(0, 60, 0);
         // currentRotation = (currentRotation + 1) % 6;
-        currentRotation = ((currentRotation - 1) + 6) % 6;
+        currentRotation = ((currentRotation - 1) + 6) % MAX_ROTATION;
     }
 
     private bool TryGetRaycastHit(out RaycastHit hit) {
@@ -203,7 +204,7 @@ public class MouseCoordinates : MonoBehaviour {
         if (previewBuildingSO.roads == null) return;
         int[] newRoads = new int[previewBuildingSO.roads[hexNumber].roadArray.Length];
         for (int i = 0; i < newRoads.Length; i++) {
-            newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % 6);
+            newRoads[i] = ((previewBuildingSO.roads[hexNumber].roadArray[i] + currentRotation) % MAX_ROTATION);
         }
 
         Dictionary<int, Dictionary<int, List<Vector3>>> waypoints =
@@ -285,7 +286,7 @@ public class MouseCoordinates : MonoBehaviour {
     }
 
     private int CalculateDirection(int index, int rotation) {
-        return (index + rotation) % 6;
+        return (index + rotation) % MAX_ROTATION;
     }
 
     private bool CanBuild(List<Hex> hexes) {
@@ -441,7 +442,7 @@ public class MouseCoordinates : MonoBehaviour {
 
                     int[] newRoads = new int[so.roads[hex.GetMultiHexDirection()].roadArray.Length];
                     for (int x = 0; x < newRoads.Length; x++) {
-                        newRoads[x] = ((so.roads[hex.GetMultiHexDirection()].roadArray[x] + hex.GetRotation()) % 6);
+                        newRoads[x] = ((so.roads[hex.GetMultiHexDirection()].roadArray[x] + hex.GetRotation()) % MAX_ROTATION);
                     }
 
                     Dictionary<int, Dictionary<int, List<Vector3>>> waypoints =
