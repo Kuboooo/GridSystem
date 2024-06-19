@@ -200,12 +200,12 @@ namespace UI {
         }
 
         private void OnEnable() {
-            MouseCoordinates.OnBuildingBuilt += OnBuildingBuilt;
+            BuildingPlacer.OnBuildingBuilt += OnBuildingBuilt;
             RestaurantUIManager.OnToppingsSelected += OnToppingsSelected;
         }
 
         private void OnDisable() {
-            MouseCoordinates.OnBuildingBuilt -= OnBuildingBuilt;
+            BuildingPlacer.OnBuildingBuilt -= OnBuildingBuilt;
             RestaurantUIManager.OnToppingsSelected -= OnToppingsSelected;
         }
 
