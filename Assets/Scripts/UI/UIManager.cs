@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using SOs;
+using StructureBuilding;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -121,9 +122,9 @@ namespace UI {
             });   
             roadMaintenanceButton.onClick.AddListener(() => {
                 Debug.Log("RoadMaintenance button 4 clicked");
-                if (int.Parse(moneyCount.text) >= previewRoadMaintenanceButtonSO.cost) {
-                    ShowPreview(previewRoadMaintenanceButtonSO);
-                }
+                // if (int.Parse(moneyCount.text) >= previewRoadMaintenanceButtonSO.cost) {
+                //     ShowPreview(previewRoadMaintenanceButtonSO);
+                // }
             });
             powerPlantBuildingButton.onClick.AddListener(() => {
                 Debug.Log("PowerPlant button clicked");

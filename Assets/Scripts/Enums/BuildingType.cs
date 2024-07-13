@@ -8,8 +8,9 @@
         Pizzeria,
         Hospital,
         RoadMaintainance,
-        PowerPlant
-
+        PowerPlant,
+        JobCenter,
+        School,
     }
 
 }

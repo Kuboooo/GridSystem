@@ -52,7 +52,7 @@ public class HexPathfinding {
         return Hex.HexDistance(a, b);
     }
 
-    private static List<Hex> GetNeighborsConnected(Hex hex, Dictionary<Hex, GameObject> hexMap) {
+    public static List<Hex> GetNeighborsConnected(Hex hex, Dictionary<Hex, GameObject> hexMap) {
         var neighbors = new List<Hex>();
 
         for (int i = 0; i <6; i++) {

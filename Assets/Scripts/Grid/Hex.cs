@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Enums;
 using Grid;
-using UnityEngine;
-
 
 public class Hex {
     public int q_;
@@ -28,6 +24,16 @@ public class Hex {
     public void SetHexProperties(HexProperties inputProperties) => properties = inputProperties;
     public HexWaypoints GetHexWaypoints() => hexWaypoints;
     public void SetHexWaypoints(HexWaypoints inputWaypoints) => hexWaypoints = inputWaypoints;
+
+    public void UpdateConnectedHexesInRange(List<Hex> connHexes) {
+        if (properties.GetAOERange() == 0) return;
+        foreach (var villageHex in connHexes) {
+            if (properties.GetConnectedHexesInRange().Contains(villageHex)) continue;
+            if (properties.GetAOERange() > HexDistance(this, villageHex)) {
+                properties.AddToConnectedVillagesInRange(villageHex);
+            }
+        }
+    }
 
     public static bool operator ==(Hex a, Hex b) {
         return a.q_ == b.q_ && a.r_ == b.r_ && a.s_ == b.s_;

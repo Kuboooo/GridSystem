@@ -22,3 +22,5 @@ MonoBehaviour:
   buildingType: 2
   roads:
   - roadArray: 000000000200000004000000
+  multiHexIndexPosition: 
+  baseRange: 3

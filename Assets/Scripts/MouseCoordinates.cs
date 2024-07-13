@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Grid;
+using StructureBuilding;
 using UnityEngine;
 using static Hex;
 using Layout = Grid.Layout;
@@ -17,8 +18,16 @@ public class MouseCoordinates : MonoBehaviour {
     private HexGridGenerator hexGridGenerator;
     private Layout layout;
     private Dictionary<Hex, GameObject> hexMap;
-    private Dictionary<Hex, GameObject> buildingsMap = new();
-
+    private Dictionary<Hex, Building> buildingsMap = new();
+    // TODO KUBO serialize these(save/load) 
+    private Dictionary<Hex, Hex> hospitalsMap = new();
+    private Dictionary<Hex, Hex> pizzeriasMap = new();
+    private Dictionary<Hex, Hex> schoolsMap = new();
+    private Dictionary<Hex, Hex> powerPlantsMap = new();
+    private Dictionary<Hex, Hex> jobCentersMap = new();
+    private Dictionary<Hex, Hex> pondsMap = new();
+    private Dictionary<Hex, Hex> villageMap = new();
+    
 
     private void Awake() {
         instance = this;
@@ -77,19 +86,81 @@ public class MouseCoordinates : MonoBehaviour {
         return hexMap.Keys.FirstOrDefault(k => k == hex);
     }
 
-    public Dictionary<Hex, GameObject> GetBuildingMap() {
+    public Dictionary<Hex, Building> GetBuildingMap() {
         return buildingsMap;
+    }
+
+    public Dictionary<Hex, Hex> GetPizzeriasMap() {
+        return pizzeriasMap;
+    }
+
+    public Dictionary<Hex, Hex> GetHospitalsMap() {
+        return hospitalsMap;
+    }
+
+    public Dictionary<Hex, Hex> GetSchoolsMap() {
+        return schoolsMap;
+    }
+
+    public Dictionary<Hex, Hex> GetPowerPlantsMap() {
+        return powerPlantsMap;
+    }
+
+    public Dictionary<Hex, Hex> GetJobCentersMap() {
+        return jobCentersMap;
+    }
+
+    public Dictionary<Hex, Hex> GetPondsMap() {
+        return pondsMap;
+    }
+    
+    public Dictionary<Hex, Hex> GetVillageMap() {
+        return villageMap;
     }
 
     public Dictionary<Hex, GameObject> GetMap() {
         return hexMap;
     }
 
+    public void SetBuildingMap(Dictionary<Hex, Building> buildingMap) {
+        buildingsMap = buildingMap;
+    }
+    public void SetPondsMap(Dictionary<Hex, Hex> pondMap) {
+        pondsMap = pondMap;
+    }
+    public void SetVillageMap(Dictionary<Hex, Hex> villagseMap) {
+        this.villageMap = villageMap;
+    }
+    
+    public void SetPizzeriasMap(Dictionary<Hex, Hex> pizzeriaMap) {
+        this.pizzeriasMap = pizzeriaMap;
+    }
+    
+    public void SetHospitalsMap(Dictionary<Hex, Hex> hospitalMap) {
+        this.hospitalsMap = hospitalMap;
+    }
+    
+    public void SetSchoolsMap(Dictionary<Hex, Hex> schoolMap) {
+        this.schoolsMap = schoolMap;
+    }
+    
+    public void SetPowerPlantsMap(Dictionary<Hex, Hex> powerPlantMap) {
+        this.powerPlantsMap = powerPlantMap;
+    }
+    
+    public void SetJobCentersMap(Dictionary<Hex, Hex> jobCenterMap) {
+        this.jobCentersMap = jobCenterMap;
+    }
+    
     public static MouseCoordinates GetInstance() {
         return instance;
     }
 
     public Layout GetLayout() {
         return layout;
+    }
+
+    public void SetHexMap(Dictionary<Hex, GameObject> serializedMap) {
+        hexMap = serializedMap;
     }
 }
