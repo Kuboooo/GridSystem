@@ -146,10 +146,6 @@ public class Hex {
         int newR = -s;
         int newS = -q;
 
-        // int newQ = -s;
-        // int newR = -q;
-        // int newS = -r;
-
         return new Hex(newQ, newR, newS);
     }
 

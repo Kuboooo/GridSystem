@@ -44,7 +44,6 @@ public class HexHighlighter : MonoBehaviour {
     public static void UnhighlightHexesRange() {
         if (previousHexesInRange is null) return;
     
-        // previ?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(true);
         foreach (var hexInRange in previousHexesInRange) {
             previousHexMap.TryGetValue(hexInRange, out GameObject inRangeHexObject);
             inRangeHexObject?.transform.Find(HEX_HOVER_IDENTIFIER).gameObject.SetActive(false);

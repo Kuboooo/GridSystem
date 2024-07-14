@@ -73,6 +73,7 @@ public class City {
     }
 
     private void CalculateSocialFeeling() {
+        // TODO: Implement 
         // int connectedVillages = HexRangeFinder.GetOnlyConnectedInRange(BuildingType.Village).Count;
         // int connectedPonds = HexRangeFinder.GetOnlyConnectedInRange(BuildingType.Pond).Count;
         // int connectedPowerPlants = HexRangeFinder.GetOnlyConnectedInRange(BuildingType.PowerPlant).Count;
