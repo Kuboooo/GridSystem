@@ -128,28 +128,28 @@ public class MouseCoordinates : MonoBehaviour {
     public void SetPondsMap(Dictionary<Hex, Hex> pondMap) {
         pondsMap = pondMap;
     }
-    public void SetVillageMap(Dictionary<Hex, Hex> villagseMap) {
-        this.villageMap = villageMap;
+    public void SetVillageMap(Dictionary<Hex, Hex> innputVillageMap) {
+        villageMap = innputVillageMap;
     }
     
     public void SetPizzeriasMap(Dictionary<Hex, Hex> pizzeriaMap) {
-        this.pizzeriasMap = pizzeriaMap;
+        pizzeriasMap = pizzeriaMap;
     }
     
     public void SetHospitalsMap(Dictionary<Hex, Hex> hospitalMap) {
-        this.hospitalsMap = hospitalMap;
+        hospitalsMap = hospitalMap;
     }
     
     public void SetSchoolsMap(Dictionary<Hex, Hex> schoolMap) {
-        this.schoolsMap = schoolMap;
+        schoolsMap = schoolMap;
     }
     
     public void SetPowerPlantsMap(Dictionary<Hex, Hex> powerPlantMap) {
-        this.powerPlantsMap = powerPlantMap;
+        powerPlantsMap = powerPlantMap;
     }
     
     public void SetJobCentersMap(Dictionary<Hex, Hex> jobCenterMap) {
-        this.jobCentersMap = jobCenterMap;
+        jobCentersMap = jobCenterMap;
     }
     
     public static MouseCoordinates GetInstance() {

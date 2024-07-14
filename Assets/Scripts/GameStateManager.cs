@@ -165,11 +165,6 @@ public class GameStateManager : MonoBehaviour {
                         break;
                 }
 
-                if (buildingType == BuildingType.Hospital) {
-                    hospitalsMap.Add(hex, hex);
-                }
-                
-
                 var newRoads = new int[so.roads[hex.GetHexProperties().GetMultiHexDirection()].roadArray.Length];
                 for (var x = 0; x < newRoads.Length; x++) {
                     newRoads[x] = (so.roads[hex.GetHexProperties().GetMultiHexDirection()].roadArray[x] +

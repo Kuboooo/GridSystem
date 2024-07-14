@@ -63,9 +63,9 @@ public class City {
                     (connectedToSchools / totalAmountOfVIllageBuildings * 2.0f) +
                     (connectedToJobCenter / totalAmountOfVIllageBuildings * 1.0f) +
                     (connectedToPonds / totalAmountOfVIllageBuildings * 1.0f);
-        Debug.Log("Unique connected to pizzerias: " + uniqueConnectedToPizzeriasCount);
-        Debug.Log("Connected to schools: " + connectedToSchools);
         Debug.Log("Connected to job centers: " + connectedToJobCenter);
+        Debug.Log("Connected to schools: " + connectedToSchools);
+        Debug.Log("Unique connected to pizzerias: " + uniqueConnectedToPizzeriasCount);
         Debug.Log("Connected to ponds: " + connectedToPonds);
         Debug.Log("Total amount of village buildings: " + totalAmountOfVIllageBuildings);
         
